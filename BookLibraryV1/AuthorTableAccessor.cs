@@ -114,6 +114,7 @@ namespace BookLibraryV1
                     {
                         Name= reader.GetString(0),
                         Text = reader.GetString(1),
+                        Tag = "Author"
                     };
                 }
                 return authorTreeNodes;

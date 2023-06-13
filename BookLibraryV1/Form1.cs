@@ -11,6 +11,7 @@ using System.Data.SQLite;
 using System.Security.Cryptography;
 using System.IO;
 using System.Collections;
+using System.Diagnostics;
 
 namespace BookLibraryV1
 {
@@ -26,6 +27,7 @@ namespace BookLibraryV1
         public List<string> booksTitles = new List<string>();
         TreeNode mainNode;
         TreeNode altMainNode;
+        TreeNode savedNode;
 
         String bookId;
         String authorId;
@@ -54,12 +56,10 @@ namespace BookLibraryV1
             genreTableAccessor = new GenreTableAccessor(this, URL, connection);
             fileReader = new FileReader(this, authorTableAccessor, bookTableAccessor, genreTableAccessor);
 
-            mainNode = new TreeNode();
             altMainNode = new TreeNode();
-
             altMainNode.Text = "Books Without Authors";
             altMainNode.Name = "Authorless";
-
+            mainNode = new TreeNode();
             mainNode.Name = "main";
             mainNode.Text = "Authors";
             mainNode.ExpandAll();
@@ -71,7 +71,6 @@ namespace BookLibraryV1
 
             EditGenresComboBox.SelectedIndex = 0;
             EditGenresComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-
             SearchTypeComboBox.SelectedIndex = 0;
             SearchTypeComboBox.DropDownStyle= ComboBoxStyle.DropDownList;
 
@@ -115,7 +114,7 @@ namespace BookLibraryV1
         private void AddBtn_Click(object sender, EventArgs e)
         {
             fileReader.populateTables(booksTitles);
-            populateTreeView("default");
+            populateTreeView("default1");
         }
         private void createTables()
         {
@@ -146,10 +145,16 @@ namespace BookLibraryV1
                     populateTreeView("byGenre");
                     break;
                 case "Search By Keywords":
+                    mainNode.Text = "Books";
+                    populateTreeView("byKeywords");
                     break;
                 case "Search By Publisher":
+                    mainNode.Text = "Books";
+                    populateTreeView("byPublisher");
                     break;
                 case "Search By Series":
+                    mainNode.Text = "Books";
+                    populateTreeView("bySeries");
                     break;
             }
         }
@@ -163,6 +168,12 @@ namespace BookLibraryV1
             switch (type)
             {
                 case "default":
+                    mainNode.Text = "Authors";
+                    authors = authorTableAccessor.getAuthors();
+                    books = bookTableAccessor.getBooks();
+                    populateTreeViewByThreeLayers(authors, books);
+                    break;
+                case "default1":
                     mainNode.Text = "Authors";
                     authors = authorTableAccessor.getAuthors();
                     books = bookTableAccessor.getBooks();
@@ -182,6 +193,20 @@ namespace BookLibraryV1
                 case "byGenre":
                     mainNode.Text = "Books";
                     books = bookTableAccessor.searchByGenre(SearchTextBox.Text);
+                    populateTreeViewByBook(books);
+                    break;
+                case "byKeywords":
+                    mainNode.Text = "Books";
+                    books = bookTableAccessor.searchByKeywords(SearchTextBox.Text);
+                    populateTreeViewByBook(books);
+                    break;
+                case "byPublisher":
+                    mainNode.Text = "Books";
+                    books = bookTableAccessor.searchByPublisher(SearchTextBox.Text);
+                    populateTreeViewByBook(books);
+                    break;
+                case "bySeries":
+                    books = bookTableAccessor.searchBySeries(SearchTextBox.Text);
                     populateTreeViewByBook(books);
                     break;
             }
@@ -262,6 +287,7 @@ namespace BookLibraryV1
             {
                 bookId = ViewBooks.SelectedNode.Name.Trim();
                 DirectoryTextBox.Text = bookId;
+
                 authorDetails = authorTableAccessor.getAuthor(ViewBooks.SelectedNode.Tag.ToString());
                 bookDetails = bookTableAccessor.getBook(bookId);
                 
@@ -368,6 +394,39 @@ namespace BookLibraryV1
             }
         }
 
-       
+        private void showInFileExplorer_Click(object sender, EventArgs e)
+        {
+            if (ViewBooks.SelectedNode != null)
+            {
+                if (ViewBooks.SelectedNode.Nodes.Count == 0)
+                {
+                    String folderPath = bookTableAccessor.getDirectory(ViewBooks.SelectedNode.Name);
+                    DirectoryTextBox.Text = $"In file explorer: url is: {folderPath}";
+                    if (folderPath != null)
+                    {
+                        Process.Start("explorer.exe", "/select, \"" + folderPath + "\"");
+                    }
+                }
+            }
+        }
+
+        private void UpdateSeriesName_Click(object sender, EventArgs e)
+        {
+            bookTableAccessor.updateSeriesName(SeriesNameTextBox.Text, ViewBooks.SelectedNode.Parent.Text.Trim(),ViewBooks.SelectedNode.Parent.Tag.ToString());
+            ViewBooks.SelectedNode.Parent.Text = SeriesNameTextBox.Text;
+        }
+
+        private void UpdateSeriesNumBtn_Click(object sender, EventArgs e)
+        {         
+            TreeNode cNode = ViewBooks.SelectedNode;
+            TreeNode pNode = cNode.Parent;
+            if(pNode.Tag != "Author")
+            {
+                bookTableAccessor.updateSeriesNum(SeriesNumberTextBox.Text, cNode.Name);
+                cNode.Remove();
+                pNode.Nodes.Insert(Int32.Parse(SeriesNumberTextBox.Text.Trim()), cNode);
+
+            }
+        }
     }
 }

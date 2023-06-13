@@ -58,12 +58,18 @@
             this.SeriesNumberTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.showInFileExplorer = new System.Windows.Forms.Button();
+            this.ViewInBrowserBtn = new System.Windows.Forms.Button();
+            this.UpdateSeriesName = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.UpdateSeriesNumBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
             // SelectFile
             // 
-            this.SelectFile.Location = new System.Drawing.Point(483, 589);
+            this.SelectFile.Location = new System.Drawing.Point(486, 618);
             this.SelectFile.Name = "SelectFile";
             this.SelectFile.Size = new System.Drawing.Size(75, 23);
             this.SelectFile.TabIndex = 0;
@@ -73,7 +79,7 @@
             // 
             // AddBtn
             // 
-            this.AddBtn.Location = new System.Drawing.Point(642, 589);
+            this.AddBtn.Location = new System.Drawing.Point(645, 618);
             this.AddBtn.Name = "AddBtn";
             this.AddBtn.Size = new System.Drawing.Size(75, 23);
             this.AddBtn.TabIndex = 1;
@@ -175,7 +181,7 @@
             // 
             // DirectoryTextBox
             // 
-            this.DirectoryTextBox.Location = new System.Drawing.Point(483, 563);
+            this.DirectoryTextBox.Location = new System.Drawing.Point(486, 592);
             this.DirectoryTextBox.Name = "DirectoryTextBox";
             this.DirectoryTextBox.Size = new System.Drawing.Size(234, 20);
             this.DirectoryTextBox.TabIndex = 15;
@@ -198,7 +204,7 @@
             // 
             // SaveBook
             // 
-            this.SaveBook.Location = new System.Drawing.Point(878, 561);
+            this.SaveBook.Location = new System.Drawing.Point(894, 618);
             this.SaveBook.Name = "SaveBook";
             this.SaveBook.Size = new System.Drawing.Size(134, 23);
             this.SaveBook.TabIndex = 19;
@@ -294,7 +300,7 @@
             // 
             // FailedURLs
             // 
-            this.FailedURLs.Location = new System.Drawing.Point(22, 563);
+            this.FailedURLs.Location = new System.Drawing.Point(22, 592);
             this.FailedURLs.Name = "FailedURLs";
             this.FailedURLs.Size = new System.Drawing.Size(452, 49);
             this.FailedURLs.TabIndex = 30;
@@ -332,11 +338,75 @@
             this.label2.TabIndex = 34;
             this.label2.Text = "Series Number";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Location = new System.Drawing.Point(192, 566);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(101, 18);
+            this.label3.TabIndex = 35;
+            this.label3.Text = "Failed to Load";
+            // 
+            // showInFileExplorer
+            // 
+            this.showInFileExplorer.Location = new System.Drawing.Point(756, 592);
+            this.showInFileExplorer.Name = "showInFileExplorer";
+            this.showInFileExplorer.Size = new System.Drawing.Size(272, 23);
+            this.showInFileExplorer.TabIndex = 36;
+            this.showInFileExplorer.Text = "Open in File Explorer";
+            this.showInFileExplorer.UseVisualStyleBackColor = true;
+            this.showInFileExplorer.Click += new System.EventHandler(this.showInFileExplorer_Click);
+            // 
+            // ViewInBrowserBtn
+            // 
+            this.ViewInBrowserBtn.Location = new System.Drawing.Point(756, 618);
+            this.ViewInBrowserBtn.Name = "ViewInBrowserBtn";
+            this.ViewInBrowserBtn.Size = new System.Drawing.Size(132, 23);
+            this.ViewInBrowserBtn.TabIndex = 37;
+            this.ViewInBrowserBtn.Text = "Export to Browser";
+            this.ViewInBrowserBtn.UseVisualStyleBackColor = true;
+            // 
+            // UpdateSeriesName
+            // 
+            this.UpdateSeriesName.Location = new System.Drawing.Point(483, 170);
+            this.UpdateSeriesName.Name = "UpdateSeriesName";
+            this.UpdateSeriesName.Size = new System.Drawing.Size(100, 23);
+            this.UpdateSeriesName.TabIndex = 38;
+            this.UpdateSeriesName.Text = "Update";
+            this.UpdateSeriesName.UseVisualStyleBackColor = true;
+            this.UpdateSeriesName.Click += new System.EventHandler(this.UpdateSeriesName_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(483, 536);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(267, 23);
+            this.button4.TabIndex = 39;
+            this.button4.Text = "button4";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // UpdateSeriesNumBtn
+            // 
+            this.UpdateSeriesNumBtn.Location = new System.Drawing.Point(617, 169);
+            this.UpdateSeriesNumBtn.Name = "UpdateSeriesNumBtn";
+            this.UpdateSeriesNumBtn.Size = new System.Drawing.Size(100, 23);
+            this.UpdateSeriesNumBtn.TabIndex = 40;
+            this.UpdateSeriesNumBtn.Text = "Update";
+            this.UpdateSeriesNumBtn.UseVisualStyleBackColor = true;
+            this.UpdateSeriesNumBtn.Click += new System.EventHandler(this.UpdateSeriesNumBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1031, 624);
+            this.ClientSize = new System.Drawing.Size(1040, 653);
+            this.Controls.Add(this.UpdateSeriesNumBtn);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.UpdateSeriesName);
+            this.Controls.Add(this.ViewInBrowserBtn);
+            this.Controls.Add(this.showInFileExplorer);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.SeriesNumberTextBox);
@@ -407,6 +477,12 @@
         private System.Windows.Forms.TextBox SeriesNumberTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button showInFileExplorer;
+        private System.Windows.Forms.Button ViewInBrowserBtn;
+        private System.Windows.Forms.Button UpdateSeriesName;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button UpdateSeriesNumBtn;
     }
 }
 

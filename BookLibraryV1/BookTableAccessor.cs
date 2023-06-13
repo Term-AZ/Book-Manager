@@ -83,7 +83,7 @@ namespace BookLibraryV1
             using(SQLiteCommand command = connection.CreateCommand())
             {
                 List<Dictionary<String, String>> bD = new List<Dictionary<string, string>>();
-                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM [Books] ORDER BY 2,4";
+                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM [Books] ORDER BY Series,SeriesNum";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -106,7 +106,7 @@ namespace BookLibraryV1
             {
                 List<Dictionary<String, String>> bD = new List<Dictionary<string, string>>();
                 SQLiteDataReader reader;
-                command.CommandText = "SELECT Id, Title, SERIES FROM [Books] WHERE AuthorId = @id";
+                command.CommandText = "SELECT Id, Title, SERIES FROM [Books] WHERE AuthorId = @id ORDER BY Series,SeriesNum";
                 command.Parameters.Add(new SQLiteParameter("@id", ""));
                 foreach (String i in ids)
                 {
@@ -132,7 +132,67 @@ namespace BookLibraryV1
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 List<Dictionary<String, String>> bD = new List<Dictionary<String, String>>();
-                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM Books WHERE Genre LIKE '%" + filter + "%'";
+                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM Books WHERE Genre LIKE '%" + filter + "%' ORDER BY Series,SeriesNum";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    bD.Add(new Dictionary<string, string>
+                    {
+                        { "Id", reader.GetInt32(0).ToString()},
+                        { "Title", reader.GetString(1)},
+                        { "AuthorId", reader.GetString(2)},
+                        { "Series", reader.GetString(3)}
+                    });
+                }
+                return formatBookNodes(bD);
+            }
+        }
+        public Dictionary<String, List<TreeNode>> searchByKeywords(String filter)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                List<Dictionary<String, String>> bD = new List<Dictionary<String, String>>();
+                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM Books WHERE Keywords LIKE '%" + filter + "%' ORDER BY Series,SeriesNum";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    bD.Add(new Dictionary<string, string>
+                    {
+                        { "Id", reader.GetInt32(0).ToString()},
+                        { "Title", reader.GetString(1)},
+                        { "AuthorId", reader.GetString(2)},
+                        { "Series", reader.GetString(3)}
+                    });
+                }
+                return formatBookNodes(bD);
+            }
+        }
+        public Dictionary<String, List<TreeNode>> searchByPublisher(String filter)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                List<Dictionary<String, String>> bD = new List<Dictionary<String, String>>();
+                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM Books WHERE Publisher LIKE '%" + filter + "%' ORDER BY Series,SeriesNum";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    bD.Add(new Dictionary<string, string>
+                    {
+                        { "Id", reader.GetInt32(0).ToString()},
+                        { "Title", reader.GetString(1)},
+                        { "AuthorId", reader.GetString(2)},
+                        { "Series", reader.GetString(3)}
+                    });
+                }
+                return formatBookNodes(bD);
+            }
+        }
+        public Dictionary<String, List<TreeNode>> searchBySeries(String filter)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                List<Dictionary<String, String>> bD = new List<Dictionary<String, String>>();
+                command.CommandText = "SELECT Id, Title, AuthorId, Series FROM Books WHERE Series LIKE '%" + filter + "%' ORDER BY Series,SeriesNum";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -270,7 +330,11 @@ namespace BookLibraryV1
                 command.CommandText = "SELECT Directory FROM Books WHERE Id=@id";
                 command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(iD)));
                 SQLiteDataReader reader = command.ExecuteReader();
-                return reader.GetString(0);
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+                return null;
             }
         }
         /// <summary>
@@ -416,8 +480,27 @@ namespace BookLibraryV1
                 return treeNodes;
             }
         }
-       
-
+        public void updateSeriesName(String nName, String cName, String authorId)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "UPDATE Books SET Series=@s WHERE Series=@oS AND AuthorId=@id";
+                command.Parameters.Add(new SQLiteParameter("@s", nName));
+                command.Parameters.Add(new SQLiteParameter("@oS", cName));
+                command.Parameters.Add(new SQLiteParameter("@id", authorId));
+                command.ExecuteNonQuery();
+            }
+        }
+        public void updateSeriesNum(String nNum, String bookId)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "UPDATE Books SET SeriesNum=@nN WHERE Id=@id";
+                command.Parameters.Add(new SQLiteParameter("@nN", nNum));
+                command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(bookId)));
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }
 

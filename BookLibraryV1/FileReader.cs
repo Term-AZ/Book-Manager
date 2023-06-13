@@ -196,8 +196,8 @@ namespace BookLibraryV1
             List<String> authorDetails = authorTableAccessor.getAuthor(bookTableAccessor.getAuthorId(iD).Trim());
             doc = XDocument.Load($"{bookDetails["Directory"]}");
             IEnumerable<XElement> description = doc.Root.Element(ns + "description").Elements();
-            XElement t = description.ElementAt(0);
             IEnumerable<XElement> titleInfo = description.ElementAt(findTitleInfoIndex(description)).Elements();
+            XElement t = description.ElementAt(0);
             int index = findAuthorInfoIndex(titleInfo, description);
             IEnumerable<XElement> authorInfo = titleInfo.ElementAt(index).Elements();
 
@@ -221,7 +221,6 @@ namespace BookLibraryV1
                 }
             }
             //garbage code to remove, needs to be changed later
-            List<int> removableIndex = new List<int>();
             for(int i = titleInfo.Count()-1; i>=0;i--)
             {
                 switch (titleInfo.ElementAt(i).Name.ToString())
