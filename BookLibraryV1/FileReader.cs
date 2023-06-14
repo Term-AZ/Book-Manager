@@ -5,12 +5,13 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace BookLibraryV1
 {
     internal class FileReader
     {
-        Form1 form;
+        static Form1 form;
         AuthorTableAccessor authorTableAccessor;
         BookTableAccessor bookTableAccessor;
         GenreTableAccessor genreTableAccessor;
@@ -18,6 +19,9 @@ namespace BookLibraryV1
         Dictionary<String , String> bookList;
         XDocument doc;
         XNamespace ns = "http://www.gribuser.ru/xml/fictionbook/2.0";
+        private static ManualResetEvent mre = new ManualResetEvent(false);
+        static int c=0;
+        private delegate void SafeCallDelegate(string text);
         public FileReader(Form1 f, AuthorTableAccessor dBAuthor, BookTableAccessor dBBooks, GenreTableAccessor dbGenre) {
             form = f;
             authorTableAccessor = dBAuthor;
@@ -26,14 +30,24 @@ namespace BookLibraryV1
         } 
         public void populateTables(List<String> files)
         {
+
+            ThreadStart counter = new ThreadStart(counterThread);
+            Thread counterThreads = new Thread(counter); 
+            //counterThreads.Start();
+            c = files.Count;
+            int o = 0;
+            
+            form.ProgressLbl.Visible = true;
             authorTableAccessor.resetAuthorTable();
             bookTableAccessor.resetBookTable();
+
 
             List<String> tags;
             List<String> failedFiles = new List<string>();
 
             foreach (string file in files)
             {
+                mre.Reset();
                 StringBuilder sb = new StringBuilder("");
                 authorList = new Dictionary<String, String>
                 {
@@ -106,14 +120,6 @@ namespace BookLibraryV1
                         default:
                             break;
                     }
-/*                    if (!fFirstName)
-                    {
-                        authorList["FirstNames"].Add("");
-                    }
-                    if (!fLastName)
-                    {
-                        authorList["LastNames"].Add("");
-                    }*/
                 }
                 
                 foreach (XElement bookElements in titleInfo)
@@ -125,7 +131,10 @@ namespace BookLibraryV1
                             bookList["Title"] = (bookElements.Value);
                             break;
                         case "{http://www.gribuser.ru/xml/fictionbook/2.0}sequence":
-                            bookList["Series"] = bookElements.Attribute("name").Value;
+                            if(bookElements.Attribute("name")!= null)
+                            {
+                                bookList["Series"] = bookElements.Attribute("name").Value;
+                            }
                             if (bookElements.Attribute("number") != null)
                             {
                                 bookList["SeriesNum"] = bookElements.Attribute("number").Value;
@@ -183,12 +192,12 @@ namespace BookLibraryV1
                         break;
                     }
                 }
-
-                form.DirectoryTextBox.Text = $"List size: {authorList.Count()}";
+                //mre.Set();
+                form.ProgressLbl.Text = $"{o}";
                 authorTableAccessor.addToAuthorTable(authorList);
                 bookTableAccessor.addBook(bookList);
-                form.populateFailed(failedFiles);
             }
+            form.populateFailed(failedFiles);
         }
         public void editBook(String iD, String directory)
         {
@@ -283,6 +292,26 @@ namespace BookLibraryV1
             }
             return 0;
         }
+        private static void counterThread(){
+            for(int i =1; i <= c; i++)
+            {
+                mre.WaitOne();
+                form.ProgressLbl.Text = $"Files loaded: {i} / {c}";
+            }
+        }
+        private static void safeText(String text)
+        {
+            if (form.ProgressLbl.InvokeRequired)
+            {
+                var d = new SafeCallDelegate(safeText);
+                form.ProgressLbl.Invoke(d, new Object[] { text });
+            }
+            else
+            {
+                form.ProgressLbl.Text = text;
+            }
+        }
+
     }
 
 

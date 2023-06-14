@@ -23,7 +23,7 @@ namespace BookLibraryV1
         GenreTableAccessor genreTableAccessor;
         SQLiteConnection connection;
         private String URL = "";
-        private string[] files;
+        public List<string> files = new List<string>();
         public List<string> booksTitles = new List<string>();
         TreeNode mainNode;
         TreeNode altMainNode;
@@ -80,21 +80,17 @@ namespace BookLibraryV1
 
         private void SelectFile_Click(object sender, EventArgs e)
         {
+            files.Clear();
+            booksTitles.Clear();
             using (var fbd = new FolderBrowserDialog())
             {
-
-/*
-                foreach (string fileName in Directory.GetFiles("C:\\Users\\augus\\source\\repos\\BookLibraryV1\\BookLibraryV1\\Books"))
-                {
-                    booksTitles.Add(fileName);
-                }
-                DirectoryTextBox.Text = $"Files found: {booksTitles.Count()}";*/
-
                 DialogResult result = fbd.ShowDialog();
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    booksTitles = Directory.GetFiles(fbd.SelectedPath).ToList();
-                    DirectoryTextBox.Text = $"Files found: {booksTitles.Count()}";
+                    files = Directory.GetFileSystemEntries(fbd.SelectedPath, "*", SearchOption.AllDirectories).ToList();
+                    allBooks(files);
+                    DirectoryTextBox.Text = $"In files: {files.Count}      In BooksTitles: {booksTitles.Count}";
+                    //DirectoryTextBox.Text = $"Files found: {booksTitles.Count()}";
                 }
                 else
                 {
@@ -103,12 +99,27 @@ namespace BookLibraryV1
             }
 
 
+
+
             /*            OpenFileDialog dlg = new OpenFileDialog();
                         dlg.Title = "Select File";
                         dlg.InitialDirectory = $"{URL}";
                         dlg.ShowDialog();
                         DirectoryTextBox.Text = dlg.FileName;
-                        URL = dlg.FileName;*/
+                        URL = dlg.FileName;*/ 
+        }
+        private void allBooks(List<String> l)
+        {
+            foreach(String f in l)
+            {
+                FileAttributes fa = File.GetAttributes(f);
+                if (fa != FileAttributes.Directory)
+                {
+                    booksTitles.Add(f);
+                    //allBooks(Directory.GetFiles(f).ToList()); TO DO IT RECURSIVELY, METHOD GetFileSystemEntries gets all files and directories already, not needed to search through each folder
+                }
+            }
+            return; 
         }
 
         private void AddBtn_Click(object sender, EventArgs e)

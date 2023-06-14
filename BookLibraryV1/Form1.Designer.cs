@@ -64,6 +64,7 @@
             this.UpdateSeriesName = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.UpdateSeriesNumBtn = new System.Windows.Forms.Button();
+            this.ProgressLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -181,7 +182,7 @@
             // 
             // DirectoryTextBox
             // 
-            this.DirectoryTextBox.Location = new System.Drawing.Point(486, 592);
+            this.DirectoryTextBox.Location = new System.Drawing.Point(486, 578);
             this.DirectoryTextBox.Name = "DirectoryTextBox";
             this.DirectoryTextBox.Size = new System.Drawing.Size(234, 20);
             this.DirectoryTextBox.TabIndex = 15;
@@ -396,11 +397,22 @@
             this.UpdateSeriesNumBtn.UseVisualStyleBackColor = true;
             this.UpdateSeriesNumBtn.Click += new System.EventHandler(this.UpdateSeriesNumBtn_Click);
             // 
+            // ProgressLbl
+            // 
+            this.ProgressLbl.AutoSize = true;
+            this.ProgressLbl.Cursor = System.Windows.Forms.Cursors.Default;
+            this.ProgressLbl.Location = new System.Drawing.Point(584, 601);
+            this.ProgressLbl.Name = "ProgressLbl";
+            this.ProgressLbl.Size = new System.Drawing.Size(35, 13);
+            this.ProgressLbl.TabIndex = 41;
+            this.ProgressLbl.Text = "label4";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 653);
+            this.Controls.Add(this.ProgressLbl);
             this.Controls.Add(this.UpdateSeriesNumBtn);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.UpdateSeriesName);
@@ -483,6 +495,7 @@
         private System.Windows.Forms.Button UpdateSeriesName;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button UpdateSeriesNumBtn;
+        public System.Windows.Forms.Label ProgressLbl;
     }
 }
 
