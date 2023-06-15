@@ -34,6 +34,7 @@ namespace BookLibraryV1
         List<String> authorDetails;
         Dictionary<String, String> bookDetails;
 
+
         Image image;
         public Form1()
         {

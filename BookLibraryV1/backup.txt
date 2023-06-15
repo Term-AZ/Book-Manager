@@ -1,0 +1,151 @@
+﻿            /*form.ProgressLbl.Visible = true;
+            authorTableAccessor.resetAuthorTable();
+            bookTableAccessor.resetBookTable();
+
+
+            List<String> tags;
+            List<String> failedFiles = new List<string>();
+
+            foreach (string file in files)
+            {
+                mre.Reset();
+                StringBuilder sb = new StringBuilder("");
+                authorList = new Dictionary<String, String>
+                {
+                    //create new list and new index
+                    { "FirstNames", "" },
+                    { "LastNames", "" },
+                    { "MiddleNames", ""},
+                    { "ID", "" }
+                };
+
+                bookList = new Dictionary<String, String>
+                {
+                    { "Title", "" },
+                    { "AuthorID", "" },
+                    { "Series", "" },
+                    { "SeriesNum", "" },
+                    { "Directory", "" },
+                    { "Genre", "" },
+                    { "Keywords", "" },
+                    { "Annotation", "" },
+                    { "Publisher", "" },
+                    { "ImageURL", "" },
+                };
+                try
+                {
+                    doc = XDocument.Load($"{file}"); //load file
+                }
+                catch(Exception e)
+                {
+                    failedFiles.Add($"{file}");
+                }
+
+                XElement elements = doc.Root.Element(ns+ "description");//gets description node
+                IEnumerable<XElement> image = doc.Root.Elements(ns+"binary");
+
+                //IEnumerable<XElement> image = (from el in doc.Elements("binary") where (string)el.Attribute("id") == "cover.jpg" select el);
+                IEnumerable<XElement> description = elements.Elements(); //all elements under description
+                IEnumerable<XElement> titleInfo = description.ElementAt(findTitleInfoIndex(description)).Elements();//opens title info element as it is the first node
+                IEnumerable<XElement> publisherInfo = description.ElementAt(findPublisherInfoIndex(description)).Elements();
+                int index = findAuthorInfoIndex(titleInfo, description);
+                IEnumerable<XElement> authorInfo = titleInfo.ElementAt(index).Elements();
+
+
+                tags = new List<String>();
+                foreach (XElement authorElements in authorInfo)
+                {
+                    switch (authorElements.Name.ToString())
+                    {
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}first-name":
+                            authorList["FirstNames"]=(authorElements.Value);
+                            //fFirstName = true;
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}last-name":
+                            if(authorElements.ElementsBeforeSelf().Count() < 2)
+                            {
+                                authorList["MiddleNames"]=("");
+                            }
+                            authorList["LastNames"]=(authorElements.Value);
+                            //fLastName = true;
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}middle-name":
+                            authorList["MiddleNames"]=(authorElements.Value);
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}id":
+                            authorList["ID"]=(authorElements.Value);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+                foreach (XElement bookElements in titleInfo)
+                {
+                    
+                    switch(bookElements.Name.ToString()) 
+                    {
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}book-title":
+                            bookList["Title"] = (bookElements.Value);
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}sequence":
+                            if(bookElements.Attribute("name")!= null)
+                            {
+                                bookList["Series"] = bookElements.Attribute("name").Value;
+                            }
+                            if (bookElements.Attribute("number") != null)
+                            {
+                                bookList["SeriesNum"] = bookElements.Attribute("number").Value;
+                            }
+                            else
+                            {
+                                bookList["SeriesNum"] = "0";
+                            }
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}genre":
+                            sb.Append(bookElements.Value + " ");
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}keywords":
+                            bookList["Keywords"] = (bookElements.Value);
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}annotation":
+                            bookList["Annotation"] = (bookElements.Value);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                foreach(XElement publisherElement in publisherInfo)
+                {
+                    switch (publisherElement.Name.ToString())
+                    {
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}publisher":
+                            bookList["Publisher"] = publisherElement.Value;
+                            break;
+                        default : break;
+                    }
+                }
+                bookList["Directory"] = file;
+                if (authorList["ID"]=="")
+                {
+                    bookList["AuthorID"] = (authorList["LastNames"]);
+                }
+                else{
+                    bookList["AuthorID"]=(authorList["ID"]);
+                }
+                bookList["Genre"] = sb.ToString();
+                foreach(XElement i in image)
+                {
+                    if (i.Attribute("id").Value == "cover.jpg")
+                    {
+                        bookList["ImageURL"] = i.Value;
+                        break;
+                    }
+                }
+                //mre.Set();
+                o = o++;
+                form.ProgressLbl.Text = $"{o}";
+                authorTableAccessor.addToAuthorTable(authorList);
+                bookTableAccessor.addBook(bookList);
+            }
+            form.populateFailed(failedFiles);*/
