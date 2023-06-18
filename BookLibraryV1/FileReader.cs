@@ -175,6 +175,7 @@ namespace BookLibraryV1
                 List<String> tags;
                 foreach (string file in books)
                 {
+                    String imageUrl = "";
                     i++;
                     Thread.SetData(localSlot, i);
                     StringBuilder sb = new StringBuilder("");
@@ -198,7 +199,6 @@ namespace BookLibraryV1
                     { "Keywords", "" },
                     { "Annotation", "" },
                     { "Publisher", "" },
-                    //{ "ImageURL", "" },
                 };
                     try
                     {
@@ -220,7 +220,6 @@ namespace BookLibraryV1
                             {
                                 case "{http://www.gribuser.ru/xml/fictionbook/2.0}first-name":
                                     authorList["FirstNames"] = (authorElements.Value);
-                                    //fFirstName = true;
                                     break;
                                 case "{http://www.gribuser.ru/xml/fictionbook/2.0}last-name":
                                     if (authorElements.ElementsBeforeSelf().Count() < 2)
@@ -228,7 +227,6 @@ namespace BookLibraryV1
                                         authorList["MiddleNames"] = ("");
                                     }
                                     authorList["LastNames"] = (authorElements.Value);
-                                    //fLastName = true;
                                     break;
                                 case "{http://www.gribuser.ru/xml/fictionbook/2.0}middle-name":
                                     authorList["MiddleNames"] = (authorElements.Value);
@@ -292,17 +290,17 @@ namespace BookLibraryV1
                             bookList["AuthorID"] = (authorList["ID"]);
                         }
                         bookList["Genre"] = sb.ToString();
-/*                        foreach (XElement i in image)
+                        foreach (XElement i in image)
                         {
                             if (i.Attribute("id").Value == "cover.jpg")
                             {
-                                bookList["ImageURL"] = i.Value;
+                                imageUrl = i.Value;
                                 break;
                             }
-                        }*/
+                        }
                         authorTableAccessor.addToAuthorTable(authorList);
                         bookTableAccessor.addBook(bookList);
-                        //imageTableAccessor.addToCoverTable(bookList["ImageURL"]);
+                        imageTableAccessor.addToCoverTable(imageUrl);
 
                     }
                     catch (Exception e)

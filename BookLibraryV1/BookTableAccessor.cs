@@ -57,7 +57,7 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "INSERT INTO [Books] VALUES (@Id,@Title,@AuthorID,@Series,@SeriesNum,@Directory,@Genre,@Keywords,@Annotation,@Publisher,)";
+                command.CommandText = "INSERT INTO [Books] VALUES (@Id,@Title,@AuthorID,@Series,@SeriesNum,@Directory,@Genre,@Keywords,@Annotation,@Publisher)";
                 command.Parameters.Add(new SQLiteParameter("@Id",0));
                 command.Parameters.Add(new SQLiteParameter("@Title", book["Title"]));
                 command.Parameters.Add(new SQLiteParameter("@AuthorID", book["AuthorID"]));

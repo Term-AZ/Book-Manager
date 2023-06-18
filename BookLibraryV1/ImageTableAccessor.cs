@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Data;
+using System.IO;
+using Microsoft.Data.Sqlite;
 
 namespace BookLibraryV1
 {
@@ -42,21 +44,38 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                if (imageCode == "")
-                {
-                    command.CommandText = "INSERT INTO COVER VALUES(@Id,@ImageCode)";
-                    command.Parameters.Add(new SQLiteParameter("@Id", 0));
-                    command.Parameters.Add(new SQLiteParameter("@ImageCode", imageCode));
-                    command.ExecuteNonQuery();
-                    return;
-                }
                 byte[] image = Convert.FromBase64String(imageCode);
+                //SqliteBlob sqliteBlob = new SqliteBlob(connection, "Covers", "ImageCode",2);
+               
+                command.CommandText = "INSERT INTO [Covers] VALUES(@Id, @ImageCode)";
+                command.Parameters.Add(new SQLiteParameter("@Id", 0));
+                command.Parameters.Add(new SQLiteParameter()
+                {
+                    ParameterName = "@ImageCode",
+                    Value = image,
+                    DbType = System.Data.DbType.Binary
+                });
 
-
-                command.CommandText = "INSERT INTO COVER VALUES(@Id,@ImageCode)";
-                command.Parameters.Add(new SQLiteParameter("@Id",0));
-                command.Parameters.Add(new SQLiteParameter("@ImageCode",DbType.Binary, 20).Value = image);
+               /* SQLiteParameter param = new SQLiteParameter("@ImageCode", System.Data.DbType.Binary);
+                param.Value = image;*/
+                //command.Parameters.Add(param);
+                //ommand.Parameters.Add(new SQLiteParameter("@ImageCode",DbType.Binary).Value = image);*/
                 command.ExecuteNonQuery();
+            }
+        }
+        public byte[] getCover(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                byte[] image = { };
+                command.CommandText = "SELECT ImageCode FROM Covers WHERE Id=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    image = (byte[])reader.GetValue(0);
+                }
+                return image;
             }
         }
 

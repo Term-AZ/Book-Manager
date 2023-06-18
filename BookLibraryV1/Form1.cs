@@ -316,12 +316,12 @@ namespace BookLibraryV1
                     AuthorLNTextBox.Text = "";
                 }
 
-
                 AnnotationBox.Text = bookDetails["Annotation"];
                 SeriesNameTextBox.Text = bookDetails["Series"];
                 SeriesNumberTextBox.Text = bookDetails["SeriesNum"];
                 populateGenreBox(bookDetails["Genre"]);
-                CoverImage.Image = getCover(bookDetails["Image"]);
+                //CoverImage.Image = getCover(bookDetails["Image"]);
+                CoverImage.Image = createCover(imageTableAccessor.getCover(bookId));
           
             }
         }
@@ -343,6 +343,13 @@ namespace BookLibraryV1
                 return image;
             }
             return null;
+        }
+        private Image createCover(byte[] s)
+        {
+            using (var ms = new MemoryStream(s))
+            {
+                return Image.FromStream(ms);
+            }
         }
 
         private void UpdateBtnBook_Click(object sender, EventArgs e)
