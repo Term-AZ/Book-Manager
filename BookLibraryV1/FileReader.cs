@@ -10,6 +10,9 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Buffers.Text;
+using System.Security.Cryptography;
+using System.Data.SQLite;
 
 namespace BookLibraryV1
 {
@@ -20,6 +23,7 @@ namespace BookLibraryV1
         static AuthorTableAccessor authorTableAccessor;
         static BookTableAccessor bookTableAccessor;
         GenreTableAccessor genreTableAccessor;
+        static ImageTableAccessor imageTableAccessor;
         static Dictionary<String, String> authorList;
         static Dictionary<String, String> bookList;
         static XDocument doc;
@@ -35,7 +39,7 @@ namespace BookLibraryV1
             authorTableAccessor = dBAuthor;
             bookTableAccessor = dBBooks;
             genreTableAccessor = dbGenre;
-
+            imageTableAccessor = dbImage;
             form2 = new Form2();
         }
         public void populateTables(List<String> files)
@@ -160,6 +164,7 @@ namespace BookLibraryV1
                 i = 0;
                 authorTableAccessor.resetAuthorTable();
                 bookTableAccessor.resetBookTable();
+                imageTableAccessor.resetCoverTable();
 
                 IEnumerable<XElement> description;
                 IEnumerable<XElement> titleInfo;
@@ -193,7 +198,7 @@ namespace BookLibraryV1
                     { "Keywords", "" },
                     { "Annotation", "" },
                     { "Publisher", "" },
-                    { "ImageURL", "" },
+                    //{ "ImageURL", "" },
                 };
                     try
                     {
@@ -287,19 +292,17 @@ namespace BookLibraryV1
                             bookList["AuthorID"] = (authorList["ID"]);
                         }
                         bookList["Genre"] = sb.ToString();
-                        foreach (XElement i in image)
+/*                        foreach (XElement i in image)
                         {
                             if (i.Attribute("id").Value == "cover.jpg")
                             {
                                 bookList["ImageURL"] = i.Value;
                                 break;
                             }
-                        }
-
-                        //form2.progressLbl.Invoke(new MethodInvoker(delegate { form2.progressLbl.Text = $"{i}"; }));
-
+                        }*/
                         authorTableAccessor.addToAuthorTable(authorList);
                         bookTableAccessor.addBook(bookList);
+                        //imageTableAccessor.addToCoverTable(bookList["ImageURL"]);
 
                     }
                     catch (Exception e)
@@ -333,7 +336,6 @@ namespace BookLibraryV1
                     form.ProgressLbl.Text = text;
                 }
             }
-
         }
     }
 

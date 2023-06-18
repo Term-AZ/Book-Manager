@@ -131,6 +131,7 @@ namespace BookLibraryV1
             bookTableAccessor.createTable();
             genreTableAccessor.createGenreTable();
             genreTableAccessor.populateGenreTable();
+            imageTableAccessor.createTable();
         }
         private void SearchBtn_Click(object sender, EventArgs e)
         {

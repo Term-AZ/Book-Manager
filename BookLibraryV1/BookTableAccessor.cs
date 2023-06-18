@@ -29,7 +29,7 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                String sql = "CREATE TABLE if not exists Books (Id INTEGER NOT NULL, Title VARCHAR(32) NOT NULL,AuthorID NOT NULL,Series VARCHAR(32), SeriesNum INTEGER, Directory TEXT NOT NULL,Genre VARCHAR(32) NOT NULL,Keywords TEXT,Annotation TEXT NOT NULL,Publisher TEXT NOT NULL,Image TEXT,CONSTRAINT PK_Books PRIMARY KEY(Id AUTOINCREMENT), FOREIGN KEY(AuthorID) REFERENCES Authors(Id))";
+                String sql = "CREATE TABLE if not exists Books (Id INTEGER NOT NULL, Title VARCHAR(32) NOT NULL,AuthorID NOT NULL,Series VARCHAR(32), SeriesNum INTEGER, Directory TEXT NOT NULL,Genre VARCHAR(32) NOT NULL,Keywords TEXT,Annotation TEXT NOT NULL,Publisher TEXT NOT NULL,CONSTRAINT PK_Books PRIMARY KEY(Id AUTOINCREMENT), FOREIGN KEY(AuthorID) REFERENCES Authors(Id))";
                 command.CommandText = sql;
                 command.ExecuteNonQuery();
             }
@@ -57,7 +57,7 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "INSERT INTO [Books] VALUES (@Id,@Title,@AuthorID,@Series,@SeriesNum,@Directory,@Genre,@Keywords,@Annotation,@Publisher,@Image)";
+                command.CommandText = "INSERT INTO [Books] VALUES (@Id,@Title,@AuthorID,@Series,@SeriesNum,@Directory,@Genre,@Keywords,@Annotation,@Publisher,)";
                 command.Parameters.Add(new SQLiteParameter("@Id",0));
                 command.Parameters.Add(new SQLiteParameter("@Title", book["Title"]));
                 command.Parameters.Add(new SQLiteParameter("@AuthorID", book["AuthorID"]));
@@ -68,7 +68,6 @@ namespace BookLibraryV1
                 command.Parameters.Add(new SQLiteParameter("@Keywords", book["Keywords"]));
                 command.Parameters.Add(new SQLiteParameter("@Annotation", book["Annotation"]));
                 command.Parameters.Add(new SQLiteParameter("@Publisher", book["Publisher"]));
-                command.Parameters.Add(new SQLiteParameter("@Image", book["ImageURL"]));
                 command.ExecuteNonQuery();
             }
 
@@ -281,7 +280,7 @@ namespace BookLibraryV1
             {
                 Dictionary<String,String> bookDetails = new Dictionary<String, String>();
                 bookDetails["SeriesNum"] = "";
-                command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, Image, SeriesNum FROM Books WHERE Id=@Id";
+                command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, SeriesNum FROM Books WHERE Id=@Id";
                 command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(id)));
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read()) 
@@ -292,8 +291,7 @@ namespace BookLibraryV1
                     bookDetails["Genre"] = reader.GetString(3);
                     bookDetails["Annotation"] = reader.GetString(4);
                     bookDetails["Publisher"] = reader.GetString(5);
-                    bookDetails["Image"] = reader.GetString(6);
-                    bookDetails["SeriesNum"] = reader.GetInt32(7).ToString();
+                    bookDetails["SeriesNum"] = reader.GetInt32(6).ToString();
 
                     
                 }
