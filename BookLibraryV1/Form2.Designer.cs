@@ -68,6 +68,6 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label progressLbl;
+        public System.Windows.Forms.Label progressLbl;
     }
 }

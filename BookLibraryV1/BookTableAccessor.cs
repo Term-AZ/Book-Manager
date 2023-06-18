@@ -29,7 +29,7 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                String sql = "CREATE TABLE if not exists Books (Id INTEGER NOT NULL, Title TEXT NOT NULL,AuthorID TEXT NOT NULL,Series TEXT, SeriesNum TEXT, Directory TEXT NOT NULL,Genre TEXT NOT NULL,Keywords TEXT,Annotation TEXT NOT NULL,Publisher TEXT NOT NULL,Image TEXT,CONSTRAINT PK_Books PRIMARY KEY(Id AUTOINCREMENT), FOREIGN KEY(AuthorID) REFERENCES Authors(Id))";
+                String sql = "CREATE TABLE if not exists Books (Id INTEGER NOT NULL, Title VARCHAR(32) NOT NULL,AuthorID NOT NULL,Series VARCHAR(32), SeriesNum INTEGER, Directory TEXT NOT NULL,Genre VARCHAR(32) NOT NULL,Keywords TEXT,Annotation TEXT NOT NULL,Publisher TEXT NOT NULL,Image TEXT,CONSTRAINT PK_Books PRIMARY KEY(Id AUTOINCREMENT), FOREIGN KEY(AuthorID) REFERENCES Authors(Id))";
                 command.CommandText = sql;
                 command.ExecuteNonQuery();
             }
@@ -62,7 +62,7 @@ namespace BookLibraryV1
                 command.Parameters.Add(new SQLiteParameter("@Title", book["Title"]));
                 command.Parameters.Add(new SQLiteParameter("@AuthorID", book["AuthorID"]));
                 command.Parameters.Add(new SQLiteParameter("@Series", book["Series"]));
-                command.Parameters.Add(new SQLiteParameter("@SeriesNum", book["SeriesNum"]));
+                command.Parameters.Add(new SQLiteParameter("@SeriesNum", Int32.Parse(book["SeriesNum"])));
                 command.Parameters.Add(new SQLiteParameter("@Directory", book["Directory"]));
                 command.Parameters.Add(new SQLiteParameter("@Genre", book["Genre"]));
                 command.Parameters.Add(new SQLiteParameter("@Keywords", book["Keywords"]));
@@ -280,6 +280,7 @@ namespace BookLibraryV1
             using( SQLiteCommand command = connection.CreateCommand()) 
             {
                 Dictionary<String,String> bookDetails = new Dictionary<String, String>();
+                bookDetails["SeriesNum"] = "";
                 command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, Image, SeriesNum FROM Books WHERE Id=@Id";
                 command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(id)));
                 SQLiteDataReader reader = command.ExecuteReader();
@@ -292,7 +293,9 @@ namespace BookLibraryV1
                     bookDetails["Annotation"] = reader.GetString(4);
                     bookDetails["Publisher"] = reader.GetString(5);
                     bookDetails["Image"] = reader.GetString(6);
-                    bookDetails["SeriesNum"] = reader.GetString(7);
+                    bookDetails["SeriesNum"] = reader.GetInt32(7).ToString();
+
+                    
                 }
                 return bookDetails;
             }

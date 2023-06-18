@@ -21,6 +21,7 @@ namespace BookLibraryV1
         BookTableAccessor bookTableAccessor;
         FileReader fileReader;
         GenreTableAccessor genreTableAccessor;
+        ImageTableAccessor imageTableAccessor;
         SQLiteConnection connection;
         private String URL = "";
         public List<string> files = new List<string>();
@@ -52,10 +53,11 @@ namespace BookLibraryV1
 
             connection = new SQLiteConnection($"data source = {URL}\\Library.db");
             connection.Open();
+            imageTableAccessor = new ImageTableAccessor(this, connection);
             authorTableAccessor = new AuthorTableAccessor(this, connection);
             bookTableAccessor = new BookTableAccessor(this, connection);
             genreTableAccessor = new GenreTableAccessor(this, URL, connection);
-            fileReader = new FileReader(this, authorTableAccessor, bookTableAccessor, genreTableAccessor);
+            fileReader = new FileReader(this, authorTableAccessor, bookTableAccessor, genreTableAccessor, imageTableAccessor);
 
             altMainNode = new TreeNode();
             altMainNode.Text = "Books Without Authors";
@@ -98,10 +100,6 @@ namespace BookLibraryV1
                     DirectoryTextBox.Text = "No files found";
                 }
             }
-
-
-
-
             /*            OpenFileDialog dlg = new OpenFileDialog();
                         dlg.Title = "Select File";
                         dlg.InitialDirectory = $"{URL}";
@@ -126,7 +124,6 @@ namespace BookLibraryV1
         private void AddBtn_Click(object sender, EventArgs e)
         {
             fileReader.populateTables(booksTitles);
-            populateTreeView("default1");
         }
         private void createTables()
         {
@@ -371,7 +368,6 @@ namespace BookLibraryV1
                     fileReader.editBook(ViewBooks.SelectedNode.Name.Trim(), fbd.SelectedPath);
                     DirectoryTextBox.Text = "File Saved";
                 }
-
                 //fileReader.editBook(ViewBooks.SelectedNode.Name.Trim(), saveFileDialog.FileName);
             }
         }
@@ -439,6 +435,11 @@ namespace BookLibraryV1
                 pNode.Nodes.Insert(Int32.Parse(SeriesNumberTextBox.Text.Trim()), cNode);
 
             }
+        }
+
+        private void updateBtn_Click(object sender, EventArgs e)
+        {
+            populateTreeView("default1");
         }
     }
 }

@@ -16,7 +16,6 @@ namespace BookLibraryV1
        
         public Form2()
         {
-            
             InitializeComponent();
         }
 

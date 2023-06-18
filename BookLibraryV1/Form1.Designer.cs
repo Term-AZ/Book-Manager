@@ -62,15 +62,15 @@
             this.showInFileExplorer = new System.Windows.Forms.Button();
             this.ViewInBrowserBtn = new System.Windows.Forms.Button();
             this.UpdateSeriesName = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.UpdateSeriesNumBtn = new System.Windows.Forms.Button();
             this.ProgressLbl = new System.Windows.Forms.Label();
+            this.updateBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
             // SelectFile
             // 
-            this.SelectFile.Location = new System.Drawing.Point(486, 618);
+            this.SelectFile.Location = new System.Drawing.Point(270, 565);
             this.SelectFile.Name = "SelectFile";
             this.SelectFile.Size = new System.Drawing.Size(75, 23);
             this.SelectFile.TabIndex = 0;
@@ -80,7 +80,7 @@
             // 
             // AddBtn
             // 
-            this.AddBtn.Location = new System.Drawing.Point(645, 618);
+            this.AddBtn.Location = new System.Drawing.Point(351, 565);
             this.AddBtn.Name = "AddBtn";
             this.AddBtn.Size = new System.Drawing.Size(75, 23);
             this.AddBtn.TabIndex = 1;
@@ -90,28 +90,28 @@
             // 
             // BookTitleTextBox
             // 
-            this.BookTitleTextBox.Location = new System.Drawing.Point(480, 66);
+            this.BookTitleTextBox.Location = new System.Drawing.Point(552, 69);
             this.BookTitleTextBox.Name = "BookTitleTextBox";
             this.BookTitleTextBox.Size = new System.Drawing.Size(237, 20);
             this.BookTitleTextBox.TabIndex = 3;
             // 
             // AuthorFNTextBox
             // 
-            this.AuthorFNTextBox.Location = new System.Drawing.Point(480, 356);
+            this.AuthorFNTextBox.Location = new System.Drawing.Point(552, 359);
             this.AuthorFNTextBox.Name = "AuthorFNTextBox";
             this.AuthorFNTextBox.Size = new System.Drawing.Size(139, 20);
             this.AuthorFNTextBox.TabIndex = 4;
             // 
             // AuthorMNTextBox
             // 
-            this.AuthorMNTextBox.Location = new System.Drawing.Point(480, 397);
+            this.AuthorMNTextBox.Location = new System.Drawing.Point(552, 400);
             this.AuthorMNTextBox.Name = "AuthorMNTextBox";
             this.AuthorMNTextBox.Size = new System.Drawing.Size(139, 20);
             this.AuthorMNTextBox.TabIndex = 5;
             // 
             // AuthorLNTextBox
             // 
-            this.AuthorLNTextBox.Location = new System.Drawing.Point(480, 440);
+            this.AuthorLNTextBox.Location = new System.Drawing.Point(552, 443);
             this.AuthorLNTextBox.Name = "AuthorLNTextBox";
             this.AuthorLNTextBox.Size = new System.Drawing.Size(139, 20);
             this.AuthorLNTextBox.TabIndex = 6;
@@ -119,7 +119,7 @@
             // TitleLabel
             // 
             this.TitleLabel.AutoSize = true;
-            this.TitleLabel.Location = new System.Drawing.Point(477, 50);
+            this.TitleLabel.Location = new System.Drawing.Point(549, 53);
             this.TitleLabel.Name = "TitleLabel";
             this.TitleLabel.Size = new System.Drawing.Size(30, 13);
             this.TitleLabel.TabIndex = 7;
@@ -128,7 +128,7 @@
             // AFNLabel
             // 
             this.AFNLabel.AutoSize = true;
-            this.AFNLabel.Location = new System.Drawing.Point(480, 340);
+            this.AFNLabel.Location = new System.Drawing.Point(552, 343);
             this.AFNLabel.Name = "AFNLabel";
             this.AFNLabel.Size = new System.Drawing.Size(94, 13);
             this.AFNLabel.TabIndex = 8;
@@ -137,7 +137,7 @@
             // AMNLabel
             // 
             this.AMNLabel.AutoSize = true;
-            this.AMNLabel.Location = new System.Drawing.Point(480, 383);
+            this.AMNLabel.Location = new System.Drawing.Point(552, 386);
             this.AMNLabel.Name = "AMNLabel";
             this.AMNLabel.Size = new System.Drawing.Size(103, 13);
             this.AMNLabel.TabIndex = 9;
@@ -146,7 +146,7 @@
             // ALNLabel
             // 
             this.ALNLabel.AutoSize = true;
-            this.ALNLabel.Location = new System.Drawing.Point(480, 424);
+            this.ALNLabel.Location = new System.Drawing.Point(552, 427);
             this.ALNLabel.Name = "ALNLabel";
             this.ALNLabel.Size = new System.Drawing.Size(92, 13);
             this.ALNLabel.TabIndex = 10;
@@ -154,7 +154,7 @@
             // 
             // UpdateBtnBook
             // 
-            this.UpdateBtnBook.Location = new System.Drawing.Point(480, 92);
+            this.UpdateBtnBook.Location = new System.Drawing.Point(552, 95);
             this.UpdateBtnBook.Name = "UpdateBtnBook";
             this.UpdateBtnBook.Size = new System.Drawing.Size(237, 23);
             this.UpdateBtnBook.TabIndex = 11;
@@ -165,7 +165,7 @@
             // GenreLabel
             // 
             this.GenreLabel.AutoSize = true;
-            this.GenreLabel.Location = new System.Drawing.Point(483, 195);
+            this.GenreLabel.Location = new System.Drawing.Point(555, 198);
             this.GenreLabel.Name = "GenreLabel";
             this.GenreLabel.Size = new System.Drawing.Size(41, 13);
             this.GenreLabel.TabIndex = 12;
@@ -174,7 +174,7 @@
             // CoverImage
             // 
             this.CoverImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.CoverImage.Location = new System.Drawing.Point(756, 12);
+            this.CoverImage.Location = new System.Drawing.Point(842, 12);
             this.CoverImage.Name = "CoverImage";
             this.CoverImage.Size = new System.Drawing.Size(256, 353);
             this.CoverImage.TabIndex = 14;
@@ -182,22 +182,22 @@
             // 
             // DirectoryTextBox
             // 
-            this.DirectoryTextBox.Location = new System.Drawing.Point(486, 578);
+            this.DirectoryTextBox.Location = new System.Drawing.Point(22, 565);
             this.DirectoryTextBox.Name = "DirectoryTextBox";
-            this.DirectoryTextBox.Size = new System.Drawing.Size(234, 20);
+            this.DirectoryTextBox.Size = new System.Drawing.Size(242, 20);
             this.DirectoryTextBox.TabIndex = 15;
             // 
             // ViewBooks
             // 
             this.ViewBooks.Location = new System.Drawing.Point(22, 50);
             this.ViewBooks.Name = "ViewBooks";
-            this.ViewBooks.Size = new System.Drawing.Size(452, 509);
+            this.ViewBooks.Size = new System.Drawing.Size(521, 509);
             this.ViewBooks.TabIndex = 16;
             this.ViewBooks.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ViewBooks_AfterSelect);
             // 
             // AnnotationBox
             // 
-            this.AnnotationBox.Location = new System.Drawing.Point(756, 371);
+            this.AnnotationBox.Location = new System.Drawing.Point(842, 371);
             this.AnnotationBox.Name = "AnnotationBox";
             this.AnnotationBox.Size = new System.Drawing.Size(261, 164);
             this.AnnotationBox.TabIndex = 18;
@@ -205,7 +205,7 @@
             // 
             // SaveBook
             // 
-            this.SaveBook.Location = new System.Drawing.Point(894, 618);
+            this.SaveBook.Location = new System.Drawing.Point(969, 567);
             this.SaveBook.Name = "SaveBook";
             this.SaveBook.Size = new System.Drawing.Size(134, 23);
             this.SaveBook.TabIndex = 19;
@@ -215,7 +215,7 @@
             // 
             // updateBtnAuthor
             // 
-            this.updateBtnAuthor.Location = new System.Drawing.Point(483, 467);
+            this.updateBtnAuthor.Location = new System.Drawing.Point(555, 470);
             this.updateBtnAuthor.Name = "updateBtnAuthor";
             this.updateBtnAuthor.Size = new System.Drawing.Size(75, 23);
             this.updateBtnAuthor.TabIndex = 21;
@@ -226,14 +226,14 @@
             // GenreListBox
             // 
             this.GenreListBox.FormattingEnabled = true;
-            this.GenreListBox.Location = new System.Drawing.Point(483, 211);
+            this.GenreListBox.Location = new System.Drawing.Point(555, 214);
             this.GenreListBox.Name = "GenreListBox";
             this.GenreListBox.Size = new System.Drawing.Size(120, 108);
             this.GenreListBox.TabIndex = 22;
             // 
             // EditGenreBtn
             // 
-            this.EditGenreBtn.Location = new System.Drawing.Point(610, 296);
+            this.EditGenreBtn.Location = new System.Drawing.Point(682, 299);
             this.EditGenreBtn.Name = "EditGenreBtn";
             this.EditGenreBtn.Size = new System.Drawing.Size(140, 23);
             this.EditGenreBtn.TabIndex = 23;
@@ -243,7 +243,7 @@
             // 
             // genreText
             // 
-            this.genreText.Location = new System.Drawing.Point(610, 211);
+            this.genreText.Location = new System.Drawing.Point(682, 214);
             this.genreText.Name = "genreText";
             this.genreText.Size = new System.Drawing.Size(140, 20);
             this.genreText.TabIndex = 25;
@@ -255,7 +255,7 @@
             "Edit Selected Genre",
             "Delete Selected Genre",
             "Add New Genre"});
-            this.EditGenresComboBox.Location = new System.Drawing.Point(610, 237);
+            this.EditGenresComboBox.Location = new System.Drawing.Point(682, 240);
             this.EditGenresComboBox.Name = "EditGenresComboBox";
             this.EditGenresComboBox.Size = new System.Drawing.Size(140, 21);
             this.EditGenresComboBox.TabIndex = 26;
@@ -301,22 +301,22 @@
             // 
             // FailedURLs
             // 
-            this.FailedURLs.Location = new System.Drawing.Point(22, 592);
+            this.FailedURLs.Location = new System.Drawing.Point(13, 633);
             this.FailedURLs.Name = "FailedURLs";
-            this.FailedURLs.Size = new System.Drawing.Size(452, 49);
+            this.FailedURLs.Size = new System.Drawing.Size(1098, 49);
             this.FailedURLs.TabIndex = 30;
             this.FailedURLs.Text = "";
             // 
             // SeriesNameTextBox
             // 
-            this.SeriesNameTextBox.Location = new System.Drawing.Point(483, 144);
+            this.SeriesNameTextBox.Location = new System.Drawing.Point(555, 147);
             this.SeriesNameTextBox.Name = "SeriesNameTextBox";
             this.SeriesNameTextBox.Size = new System.Drawing.Size(100, 20);
             this.SeriesNameTextBox.TabIndex = 31;
             // 
             // SeriesNumberTextBox
             // 
-            this.SeriesNumberTextBox.Location = new System.Drawing.Point(617, 144);
+            this.SeriesNumberTextBox.Location = new System.Drawing.Point(689, 147);
             this.SeriesNumberTextBox.Name = "SeriesNumberTextBox";
             this.SeriesNumberTextBox.Size = new System.Drawing.Size(100, 20);
             this.SeriesNumberTextBox.TabIndex = 32;
@@ -324,7 +324,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(483, 128);
+            this.label1.Location = new System.Drawing.Point(555, 131);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 13);
             this.label1.TabIndex = 33;
@@ -333,7 +333,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(617, 128);
+            this.label2.Location = new System.Drawing.Point(689, 131);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(76, 13);
             this.label2.TabIndex = 34;
@@ -343,7 +343,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(192, 566);
+            this.label3.Location = new System.Drawing.Point(473, 612);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(101, 18);
             this.label3.TabIndex = 35;
@@ -351,7 +351,7 @@
             // 
             // showInFileExplorer
             // 
-            this.showInFileExplorer.Location = new System.Drawing.Point(756, 592);
+            this.showInFileExplorer.Location = new System.Drawing.Point(831, 541);
             this.showInFileExplorer.Name = "showInFileExplorer";
             this.showInFileExplorer.Size = new System.Drawing.Size(272, 23);
             this.showInFileExplorer.TabIndex = 36;
@@ -361,7 +361,7 @@
             // 
             // ViewInBrowserBtn
             // 
-            this.ViewInBrowserBtn.Location = new System.Drawing.Point(756, 618);
+            this.ViewInBrowserBtn.Location = new System.Drawing.Point(831, 567);
             this.ViewInBrowserBtn.Name = "ViewInBrowserBtn";
             this.ViewInBrowserBtn.Size = new System.Drawing.Size(132, 23);
             this.ViewInBrowserBtn.TabIndex = 37;
@@ -370,7 +370,7 @@
             // 
             // UpdateSeriesName
             // 
-            this.UpdateSeriesName.Location = new System.Drawing.Point(483, 170);
+            this.UpdateSeriesName.Location = new System.Drawing.Point(555, 173);
             this.UpdateSeriesName.Name = "UpdateSeriesName";
             this.UpdateSeriesName.Size = new System.Drawing.Size(100, 23);
             this.UpdateSeriesName.TabIndex = 38;
@@ -378,18 +378,9 @@
             this.UpdateSeriesName.UseVisualStyleBackColor = true;
             this.UpdateSeriesName.Click += new System.EventHandler(this.UpdateSeriesName_Click);
             // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(483, 536);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(267, 23);
-            this.button4.TabIndex = 39;
-            this.button4.Text = "button4";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
             // UpdateSeriesNumBtn
             // 
-            this.UpdateSeriesNumBtn.Location = new System.Drawing.Point(617, 169);
+            this.UpdateSeriesNumBtn.Location = new System.Drawing.Point(689, 172);
             this.UpdateSeriesNumBtn.Name = "UpdateSeriesNumBtn";
             this.UpdateSeriesNumBtn.Size = new System.Drawing.Size(100, 23);
             this.UpdateSeriesNumBtn.TabIndex = 40;
@@ -401,20 +392,30 @@
             // 
             this.ProgressLbl.AutoSize = true;
             this.ProgressLbl.Cursor = System.Windows.Forms.Cursors.Default;
-            this.ProgressLbl.Location = new System.Drawing.Point(584, 601);
+            this.ProgressLbl.Location = new System.Drawing.Point(128, 588);
             this.ProgressLbl.Name = "ProgressLbl";
             this.ProgressLbl.Size = new System.Drawing.Size(35, 13);
             this.ProgressLbl.TabIndex = 41;
             this.ProgressLbl.Text = "label4";
             // 
+            // updateBtn
+            // 
+            this.updateBtn.Location = new System.Drawing.Point(432, 565);
+            this.updateBtn.Name = "updateBtn";
+            this.updateBtn.Size = new System.Drawing.Size(111, 23);
+            this.updateBtn.TabIndex = 42;
+            this.updateBtn.Text = "Update View";
+            this.updateBtn.UseVisualStyleBackColor = true;
+            this.updateBtn.Click += new System.EventHandler(this.updateBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1040, 653);
+            this.ClientSize = new System.Drawing.Size(1123, 729);
+            this.Controls.Add(this.updateBtn);
             this.Controls.Add(this.ProgressLbl);
             this.Controls.Add(this.UpdateSeriesNumBtn);
-            this.Controls.Add(this.button4);
             this.Controls.Add(this.UpdateSeriesName);
             this.Controls.Add(this.ViewInBrowserBtn);
             this.Controls.Add(this.showInFileExplorer);
@@ -493,9 +494,9 @@
         private System.Windows.Forms.Button showInFileExplorer;
         private System.Windows.Forms.Button ViewInBrowserBtn;
         private System.Windows.Forms.Button UpdateSeriesName;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button UpdateSeriesNumBtn;
         public System.Windows.Forms.Label ProgressLbl;
+        private System.Windows.Forms.Button updateBtn;
     }
 }
 
