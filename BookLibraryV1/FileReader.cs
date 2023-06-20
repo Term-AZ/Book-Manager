@@ -31,7 +31,8 @@ namespace BookLibraryV1
         private static ManualResetEvent mre = new ManualResetEvent(false);
         private delegate void SafeCallDelegate(string text);
         static List<String> failedFiles = new List<string>();
-        public static int i = 0;
+        public static int p = 0;
+        static Thread pr;
 
         public FileReader(Form1 f, AuthorTableAccessor dBAuthor, BookTableAccessor dBBooks, GenreTableAccessor dbGenre, ImageTableAccessor dbImage)
         {
@@ -40,7 +41,6 @@ namespace BookLibraryV1
             bookTableAccessor = dBBooks;
             genreTableAccessor = dbGenre;
             imageTableAccessor = dbImage;
-            form2 = new Form2();
         }
         public void populateTables(List<String> files)
         {
@@ -51,10 +51,10 @@ namespace BookLibraryV1
             
             counterThreads.Start(files);
             //progressBar.Start(files.Count);
-            while (counterThreads.IsAlive)
+/*            while (counterThreads.IsAlive)
             {
-                form2.progressLbl.Text = $"{i}";
-            }
+                form2.progressLbl.Text = $"{p}";
+            }*/
 
         }
         public void editBook(String iD, String directory)
@@ -161,7 +161,19 @@ namespace BookLibraryV1
             public static void readBooks(object l)
             {
                 var books = ((IEnumerable)l).Cast<object>().ToList();
-                i = 0;
+                pr = new Thread(new ThreadStart(() =>
+                {
+                    Form2 form = new Form2(books.Count);
+                    form.ShowDialog();
+                    while (p < books.Count)
+                    {
+                        form.progressLbl.Text = $"{p}";
+                    }
+                }
+                ));
+
+
+                p = 0;
                 authorTableAccessor.resetAuthorTable();
                 bookTableAccessor.resetBookTable();
                 imageTableAccessor.resetCoverTable();
@@ -171,13 +183,13 @@ namespace BookLibraryV1
                 IEnumerable<XElement> publisherInfo;
                 IEnumerable<XElement> authorInfo;
                 int index = 0;
-
                 List<String> tags;
+                pr.Start();
                 foreach (string file in books)
                 {
                     String imageUrl = "";
-                    i++;
-                    Thread.SetData(localSlot, i);
+                    p++;
+                    Thread.SetData(localSlot, p);
                     StringBuilder sb = new StringBuilder("");
                     authorList = new Dictionary<String, String>
                 {
@@ -322,17 +334,9 @@ namespace BookLibraryV1
                 }
             }
 
-            private static void safeText(String text)
+            private static void progress()
             {
-                if (form.ProgressLbl.InvokeRequired)
-                {
-                    var d = new SafeCallDelegate(safeText);
-                    form.ProgressLbl.Invoke(d, new Object[] { text });
-                }
-                else
-                {
-                    form.ProgressLbl.Text = text;
-                }
+
             }
         }
     }

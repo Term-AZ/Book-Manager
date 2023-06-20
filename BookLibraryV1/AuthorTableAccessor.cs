@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ using System.Windows.Forms;
 
 namespace BookLibraryV1
 {
-    internal class AuthorTableAccessor
+    public class AuthorTableAccessor
     {
         Form1 form;
         String source = "";
@@ -120,7 +121,7 @@ namespace BookLibraryV1
                 return authorTreeNodes;
             }
         }
-        public Dictionary<String, TreeNode> getAuthorsByName(string filter)
+        public Dictionary<String, TreeNode> getAuthorsByNameTree(string filter)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
@@ -141,6 +142,21 @@ namespace BookLibraryV1
                 return authorTreeNodes;
             }
         }
+        public List<String> getAuthorByNameList(String filter)
+        {
+            List<String> authors = new List<String>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Id FROM Authors WHERE FullName LIKE '%"+filter+"%'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    authors.Add(reader.GetString(0));
+                }
+                return authors;
+            }
+        }
+
         //get author details and return them as a list
         public List<String> getAuthor(String id)
         {

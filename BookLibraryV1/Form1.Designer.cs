@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
             this.SelectFile = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
             this.BookTitleTextBox = new System.Windows.Forms.TextBox();
@@ -65,6 +66,13 @@
             this.UpdateSeriesNumBtn = new System.Windows.Forms.Button();
             this.ProgressLbl = new System.Windows.Forms.Label();
             this.updateBtn = new System.Windows.Forms.Button();
+            this.ViewBooksListView = new System.Windows.Forms.ListView();
+            this.Id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Title = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Author = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Series = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ViewSelection = new System.Windows.Forms.ComboBox();
+            this.ChangeViewBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -301,9 +309,9 @@
             // 
             // FailedURLs
             // 
-            this.FailedURLs.Location = new System.Drawing.Point(13, 633);
+            this.FailedURLs.Location = new System.Drawing.Point(22, 638);
             this.FailedURLs.Name = "FailedURLs";
-            this.FailedURLs.Size = new System.Drawing.Size(1098, 49);
+            this.FailedURLs.Size = new System.Drawing.Size(521, 49);
             this.FailedURLs.TabIndex = 30;
             this.FailedURLs.Text = "";
             // 
@@ -343,7 +351,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(473, 612);
+            this.label3.Location = new System.Drawing.Point(19, 614);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(101, 18);
             this.label3.TabIndex = 35;
@@ -408,11 +416,75 @@
             this.updateBtn.UseVisualStyleBackColor = true;
             this.updateBtn.Click += new System.EventHandler(this.updateBtn_Click);
             // 
+            // ViewBooksListView
+            // 
+            this.ViewBooksListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Id,
+            this.Title,
+            this.Author,
+            this.Series});
+            listViewGroup2.Header = "Title";
+            listViewGroup2.Name = "Title";
+            this.ViewBooksListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup2});
+            this.ViewBooksListView.HideSelection = false;
+            this.ViewBooksListView.Location = new System.Drawing.Point(22, 50);
+            this.ViewBooksListView.Name = "ViewBooksListView";
+            this.ViewBooksListView.Size = new System.Drawing.Size(521, 509);
+            this.ViewBooksListView.TabIndex = 44;
+            this.ViewBooksListView.UseCompatibleStateImageBehavior = false;
+            this.ViewBooksListView.View = System.Windows.Forms.View.Details;
+            this.ViewBooksListView.SelectedIndexChanged += new System.EventHandler(this.ViewBooksListView_SelectedIndexChanged);
+            // 
+            // Id
+            // 
+            this.Id.Text = "Id";
+            this.Id.Width = 50;
+            // 
+            // Title
+            // 
+            this.Title.Text = "Title";
+            this.Title.Width = 150;
+            // 
+            // Author
+            // 
+            this.Author.Text = "Author";
+            this.Author.Width = 180;
+            // 
+            // Series
+            // 
+            this.Series.Text = "Series";
+            this.Series.Width = 150;
+            // 
+            // ViewSelection
+            // 
+            this.ViewSelection.FormattingEnabled = true;
+            this.ViewSelection.Items.AddRange(new object[] {
+            "Tree View",
+            "List View"});
+            this.ViewSelection.Location = new System.Drawing.Point(270, 611);
+            this.ViewSelection.Name = "ViewSelection";
+            this.ViewSelection.Size = new System.Drawing.Size(156, 21);
+            this.ViewSelection.TabIndex = 45;
+            // 
+            // ChangeViewBtn
+            // 
+            this.ChangeViewBtn.Location = new System.Drawing.Point(432, 609);
+            this.ChangeViewBtn.Name = "ChangeViewBtn";
+            this.ChangeViewBtn.Size = new System.Drawing.Size(111, 23);
+            this.ChangeViewBtn.TabIndex = 46;
+            this.ChangeViewBtn.Text = "Change View";
+            this.ChangeViewBtn.UseVisualStyleBackColor = true;
+            this.ChangeViewBtn.Click += new System.EventHandler(this.ChangeViewBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1123, 729);
+            this.ClientSize = new System.Drawing.Size(1132, 700);
+            this.Controls.Add(this.ChangeViewBtn);
+            this.Controls.Add(this.ViewSelection);
+            this.Controls.Add(this.ViewBooksListView);
             this.Controls.Add(this.updateBtn);
             this.Controls.Add(this.ProgressLbl);
             this.Controls.Add(this.UpdateSeriesNumBtn);
@@ -497,6 +569,13 @@
         private System.Windows.Forms.Button UpdateSeriesNumBtn;
         public System.Windows.Forms.Label ProgressLbl;
         private System.Windows.Forms.Button updateBtn;
+        private System.Windows.Forms.ListView ViewBooksListView;
+        private System.Windows.Forms.ColumnHeader Title;
+        private System.Windows.Forms.ColumnHeader Author;
+        private System.Windows.Forms.ColumnHeader Series;
+        private System.Windows.Forms.ComboBox ViewSelection;
+        private System.Windows.Forms.Button ChangeViewBtn;
+        private System.Windows.Forms.ColumnHeader Id;
     }
 }
 

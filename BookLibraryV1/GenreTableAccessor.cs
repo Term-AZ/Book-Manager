@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace BookLibraryV1
 {
-    internal class GenreTableAccessor
+    public class GenreTableAccessor
     {
         Form1 form;
         String xmlURL;

@@ -12,7 +12,7 @@ using System.Data.SqlClient;
 
 namespace BookLibraryV1
 {
-    internal class BookTableAccessor
+    public class BookTableAccessor
     {
         Form1 form;
         SQLiteConnection connection;
@@ -77,7 +77,7 @@ namespace BookLibraryV1
         /// linked to the author. If the book is in a series, create a series treenode instead and add the book to the series treenode. 
         /// </summary>
         /// <returns>Dictrionaryy of treeNode Lists</returns>
-        public Dictionary<String,List<TreeNode>> getBooks()
+        public Dictionary<String,List<TreeNode>> getBooksTree()
         {
             using(SQLiteCommand command = connection.CreateCommand())
             {
@@ -97,9 +97,27 @@ namespace BookLibraryV1
                 reader.Close();
                 return formatBookNodes(bD);
             }
-
         }
-        public Dictionary<String, List<TreeNode>> searchByAuthorId(List<String> ids)
+        public List<Dictionary<String, String>> getBooksList()
+        {
+            List<Dictionary<String,String>> books = new List<Dictionary<String,String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id = Books.AuthorId";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    books.Add(new Dictionary<String,String>{
+                        {"Id", reader.GetInt32(0).ToString() },
+                        {"Title", reader.GetString(1)},
+                        {"Series", reader.GetString(2)},
+                        {"Author",reader.GetString(3)}
+                    });
+                }
+                return books;
+            }
+        }
+        public Dictionary<String, List<TreeNode>> searchByAuthorIdTree(List<String> ids)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
@@ -126,7 +144,7 @@ namespace BookLibraryV1
                 return formatBookNodes(bD);
             }
         }
-        public Dictionary<String, List<TreeNode>> searchByGenre(String filter)
+        public Dictionary<String, List<TreeNode>> searchByGenreTree(String filter)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
@@ -146,7 +164,7 @@ namespace BookLibraryV1
                 return formatBookNodes(bD);
             }
         }
-        public Dictionary<String, List<TreeNode>> searchByKeywords(String filter)
+        public Dictionary<String, List<TreeNode>> searchByKeywordsTree(String filter)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
@@ -166,7 +184,7 @@ namespace BookLibraryV1
                 return formatBookNodes(bD);
             }
         }
-        public Dictionary<String, List<TreeNode>> searchByPublisher(String filter)
+        public Dictionary<String, List<TreeNode>> searchByPublisherTree(String filter)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
@@ -186,7 +204,7 @@ namespace BookLibraryV1
                 return formatBookNodes(bD);
             }
         }
-        public Dictionary<String, List<TreeNode>> searchBySeries(String filter)
+        public Dictionary<String, List<TreeNode>> searchBySeriesTree(String filter)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
@@ -269,6 +287,134 @@ namespace BookLibraryV1
             return bookDetails;
            
         }
+        public List<Dictionary<String, String>> searchByTitleList(String filter)
+        {
+            List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id = Books.AuthorId WHERE Books.Title LIKE '%" + filter + "%'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    books.Add(new Dictionary<String, String>{
+                        {"Id", reader.GetInt32(0).ToString() },
+                        {"Title", reader.GetString(1)},
+                        {"Series", reader.GetString(2)},
+                        {"Author",reader.GetString(3)}
+                    });
+                }
+                return books;
+            }
+        }
+        public List<Dictionary<String, String>> searchByAuthorList(List<String> ids)
+        {
+            List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id = Books.AuthorId WHERE AuthorId = @id";
+                command.Parameters.Add(new SQLiteParameter("@id", ""));
+                SQLiteDataReader reader;
+                foreach (String i in ids)
+                {
+                    command.Parameters["@id"].Value = i.Trim();
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        books.Add(new Dictionary<string, string>
+                        {
+                            {"Id", reader.GetInt32(0).ToString() },
+                            {"Title", reader.GetString(1) },
+                            {"Author", reader.GetString(3)},
+                            {"Series", reader.GetString(2) },
+                        });
+                    }
+                    reader.Close();
+                }
+                return books;
+            }
+        }
+        public List<Dictionary<String, String>> searchByGenreList(String filter)
+        {
+            List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Genre LIKE '%" + filter + "%'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    books.Add(new Dictionary<string, string>
+                    {
+                            {"Id", reader.GetInt32(0).ToString() },
+                            {"Title", reader.GetString(1) },
+                            {"Author", reader.GetString(3)},
+                            {"Series", reader.GetString(2) },
+                    });
+                }
+                return books;
+            }
+        }
+        public List<Dictionary<String, String>> searchByKeywordsList(String filter)
+        {
+            List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Keywords LIKE '%" + filter + "%'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    books.Add(new Dictionary<string, string>
+                    {
+                            {"Id", reader.GetInt32(0).ToString() },
+                            {"Title", reader.GetString(1) },
+                            {"Author", reader.GetString(3)},
+                            {"Series", reader.GetString(2) },
+                    });
+                }
+                return books;
+            }
+        }
+        public List<Dictionary<String, String>> searchByPublisherList(String filter)
+        {
+            List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Publisher LIKE '%" + filter + "%'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    books.Add(new Dictionary<string, string>
+                    {
+                            {"Id", reader.GetInt32(0).ToString() },
+                            {"Title", reader.GetString(1) },
+                            {"Author", reader.GetString(3)},
+                            {"Series", reader.GetString(2) },
+                    });
+                }
+                return books;
+            }
+        }
+        public List<Dictionary<String, String>> searchBySeriesList(String filter)
+        {
+            List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Series LIKE '%" + filter + "%'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    books.Add(new Dictionary<string, string>
+                    {
+                            {"Id", reader.GetInt32(0).ToString() },
+                            {"Title", reader.GetString(1) },
+                            {"Author", reader.GetString(3)},
+                            {"Series", reader.GetString(2) },
+                    });
+                }
+                return books;
+            }
+        }
+
+
         /// <summary>
         /// Gets book details to dispaly in the UI
         /// </summary>
@@ -280,7 +426,7 @@ namespace BookLibraryV1
             {
                 Dictionary<String,String> bookDetails = new Dictionary<String, String>();
                 bookDetails["SeriesNum"] = "";
-                command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, SeriesNum FROM Books WHERE Id=@Id";
+                command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, SeriesNum, AuthorId FROM Books WHERE Id=@Id";
                 command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(id)));
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read()) 
@@ -292,8 +438,7 @@ namespace BookLibraryV1
                     bookDetails["Annotation"] = reader.GetString(4);
                     bookDetails["Publisher"] = reader.GetString(5);
                     bookDetails["SeriesNum"] = reader.GetInt32(6).ToString();
-
-                    
+                    bookDetails["AuthorId"] = reader.GetString(7);
                 }
                 return bookDetails;
             }

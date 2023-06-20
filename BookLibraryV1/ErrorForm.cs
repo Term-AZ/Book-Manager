@@ -10,25 +10,20 @@ using System.Windows.Forms;
 
 namespace BookLibraryV1
 {
-    public partial class Form2 : Form
+    public partial class ErrorForm : Form
     {
-        public Form1 form;
-
-        public Form2(int max)
+        public ErrorForm(String error)
         {
             InitializeComponent();
 
+            errorLbl.Text = error;
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+
+
+        private void button1_Click(object sender, EventArgs e)
         {
+            this.Close();
         }
-
-        private void progressBar1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-    }          
-        
+    }
 }

@@ -11,7 +11,7 @@ using Microsoft.Data.Sqlite;
 
 namespace BookLibraryV1
 {
-    internal class ImageTableAccessor
+    public class ImageTableAccessor
     {
         Form1 form;
         SQLiteConnection connection;
