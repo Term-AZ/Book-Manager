@@ -78,6 +78,9 @@ namespace BookLibraryV1
                 return image;
             }
         }
-
+        public int getRecentAdded()
+        {
+            return (int)connection.LastInsertRowId;
+        }
     }
 }

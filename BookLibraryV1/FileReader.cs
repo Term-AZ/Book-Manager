@@ -178,10 +178,10 @@ namespace BookLibraryV1
                 bookTableAccessor.resetBookTable();
                 imageTableAccessor.resetCoverTable();
 
-                IEnumerable<XElement> description;
-                IEnumerable<XElement> titleInfo;
-                IEnumerable<XElement> publisherInfo;
-                IEnumerable<XElement> authorInfo;
+                IEnumerable<XElement> description= Enumerable.Empty<XElement>();
+                IEnumerable<XElement> titleInfo = Enumerable.Empty<XElement>();
+                IEnumerable<XElement> publisherInfo = Enumerable.Empty<XElement>();
+                IEnumerable<XElement> authorInfo = Enumerable.Empty<XElement>();
                 int index = 0;
                 List<String> tags;
                 pr.Start();
@@ -203,7 +203,7 @@ namespace BookLibraryV1
                     bookList = new Dictionary<String, String>
                 {
                     { "Title", "" },
-                    { "AuthorID", "" },
+                    { "AuthorId", "" },
                     { "Series", "" },
                     { "SeriesNum", "0" },
                     { "Directory", "" },
@@ -211,6 +211,7 @@ namespace BookLibraryV1
                     { "Keywords", "" },
                     { "Annotation", "" },
                     { "Publisher", "" },
+                    { "ImageId", "" },
                 };
                     try
                     {
@@ -218,12 +219,19 @@ namespace BookLibraryV1
                         XElement elements = doc.Root.Element(ns + "description");//gets description node
                         IEnumerable<XElement> image = doc.Root.Elements(ns + "binary");
 
+                        try {
+                            description = elements.Elements(); //all elements under description
+                            titleInfo = description.ElementAt(findTitleInfoIndex(description)).Elements();//opens title info element as it is the first node
+                            publisherInfo = description.ElementAt(findPublisherInfoIndex(description)).Elements();
+                            index = findAuthorInfoIndex(titleInfo, description);
+                            authorInfo = titleInfo.ElementAt(index).Elements();
+                        }
+                        catch(NullReferenceException err) {
+                            failedFiles.Add($"{file}");
+                            continue;
+                        }
                         //IEnumerable<XElement> image = (from el in doc.Elements("binary") where (string)el.Attribute("id") == "cover.jpg" select el);
-                        description = elements.Elements(); //all elements under description
-                        titleInfo = description.ElementAt(findTitleInfoIndex(description)).Elements();//opens title info element as it is the first node
-                        publisherInfo = description.ElementAt(findPublisherInfoIndex(description)).Elements();
-                        index = findAuthorInfoIndex(titleInfo, description);
-                        authorInfo = titleInfo.ElementAt(index).Elements();
+
 
                         tags = new List<String>();
                         foreach (XElement authorElements in authorInfo)
@@ -253,7 +261,6 @@ namespace BookLibraryV1
 
                         foreach (XElement bookElements in titleInfo)
                         {
-
                             switch (bookElements.Name.ToString())
                             {
                                 case "{http://www.gribuser.ru/xml/fictionbook/2.0}book-title":
@@ -293,14 +300,6 @@ namespace BookLibraryV1
                             }
                         }
                         bookList["Directory"] = file;
-                        if (authorList["ID"] == "")
-                        {
-                            bookList["AuthorID"] = (authorList["LastNames"]);
-                        }
-                        else
-                        {
-                            bookList["AuthorID"] = (authorList["ID"]);
-                        }
                         bookList["Genre"] = sb.ToString();
                         foreach (XElement i in image)
                         {
@@ -311,9 +310,10 @@ namespace BookLibraryV1
                             }
                         }
                         authorTableAccessor.addToAuthorTable(authorList);
-                        bookTableAccessor.addBook(bookList);
+                        bookList["AuthorId"] = authorTableAccessor.checkAuthorLocation(authorList["ID"]).ToString();
                         imageTableAccessor.addToCoverTable(imageUrl);
-
+                        bookList["ImageId"] = imageTableAccessor.getRecentAdded().ToString();
+                        bookTableAccessor.addBook(bookList);
                     }
                     catch (Exception e)
                     {

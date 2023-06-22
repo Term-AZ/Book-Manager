@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SQLite;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,7 +30,7 @@ namespace BookLibraryV1
             using(SQLiteCommand command = connection.CreateCommand()) 
             {
                 //check if table exists before creating it
-                String sql = "CREATE TABLE if not exists Authors (Id TEXT NOT NULL,FirstName TEXT NOT NULL, MiddleName TEXT, LastName TEXT NOT NULL, FullName TEXT NOT NULL, CONSTRAINT PK_Authors PRIMARY KEY(Id))";
+                String sql = "CREATE TABLE if not exists Authors (AuthorId INTEGER, Id TEXT,FirstName TEXT NOT NULL, MiddleName TEXT, LastName TEXT NOT NULL, FullName TEXT NOT NULL, CONSTRAINT PK_Authors PRIMARY KEY(AuthorId AUTOINCREMENT))";
                 command.CommandText = sql;
                 command.ExecuteNonQuery();
             }
@@ -42,6 +43,14 @@ namespace BookLibraryV1
             {
                 string strSql = "DELETE FROM Authors";
                 cmd.CommandText = strSql;
+                cmd.ExecuteNonQuery();
+                cmd.CommandText = "INSERT INTO [Authors] VALUES(@AuthorId,@Id, @FirstName, @MiddleName, @LastName, @FullName)";
+                cmd.Parameters.Add(new SQLiteParameter("@AuthorId", -1));
+                cmd.Parameters.Add(new SQLiteParameter("@Id", ""));
+                cmd.Parameters.Add(new SQLiteParameter("@FirstName", "No"));
+                cmd.Parameters.Add(new SQLiteParameter("@MiddleName", "Author"));
+                cmd.Parameters.Add(new SQLiteParameter("@LastName", "Found"));
+                cmd.Parameters.Add(new SQLiteParameter("@FullName", "No Author Found"));
                 cmd.ExecuteNonQuery();
             } 
         }
@@ -63,7 +72,8 @@ namespace BookLibraryV1
                         sb.Append($"{authors["FirstNames"]} ").Append($"{authors["MiddleNames"]} ").Append($"{authors["LastNames"]}");
                         reader.Close();
                         //if not add author to table
-                        cmd.CommandText = "INSERT INTO [Authors] VALUES(@Id,@FirstName,@MiddleName,@LastName,@FullName)";
+                        cmd.CommandText = "INSERT INTO [Authors] VALUES(@AuthorId, @Id,@FirstName,@MiddleName,@LastName,@FullName)";
+                        cmd.Parameters.Add(new SQLiteParameter("@AuthorId", 0));
                         cmd.Parameters.Add(new SQLiteParameter("@Id", authors["ID"]));
                         cmd.Parameters.Add(new SQLiteParameter("@FirstName", authors["FirstNames"]));
                         cmd.Parameters.Add(new SQLiteParameter("@MiddleName", authors["MiddleNames"]));
@@ -105,16 +115,16 @@ namespace BookLibraryV1
             using(SQLiteCommand command = connection.CreateCommand())
             {
                 Dictionary<String, TreeNode> authorTreeNodes = new Dictionary<String, TreeNode>();   
-                command.CommandText = "SELECT Id, FullName FROM Authors";
+                command.CommandText = "SELECT AuthorId, FullName FROM Authors ORDER BY FirstName ASC";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read()) 
                 {
                     //combine authors full name into one string
                     //create treenode for author. 
-                    authorTreeNodes[reader.GetString(0)]= new TreeNode()
+                    authorTreeNodes[reader.GetInt32(0).ToString()]= new TreeNode()
                     {
-                        Name= reader.GetString(0),
-                        Text = reader.GetString(1),
+                        Name = reader.GetInt32(0).ToString(),
+                        Text = reader.GetString(1).Trim(),
                         Tag = "Author"
                     };
                 }
@@ -127,15 +137,15 @@ namespace BookLibraryV1
             {
                 //can be done with just a list, need to know performance
                 Dictionary<String, TreeNode> authorTreeNodes = new Dictionary<String, TreeNode>();
-                command.CommandText = "SELECT Id, FullName FROM Authors WHERE FullName LIKE '%"+filter+"%'";
+                command.CommandText = "SELECT AuthorId, FullName FROM Authors WHERE FullName LIKE '%"+filter+"%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    authorTreeNodes[reader.GetString(0)] = new TreeNode()
+                    authorTreeNodes[reader.GetInt32(0).ToString()] = new TreeNode()
                     {
-                        Name = reader.GetString(0),
-                        Text = reader.GetString(1),
-                        Tag = reader.GetString(0)
+                        Name = reader.GetInt32(0).ToString(),
+                        Text = reader.GetString(1).Trim(),
+                        Tag = "Author"
                     };
                 }
                 form.DirectoryTextBox.Text = authorTreeNodes.Count.ToString();
@@ -147,11 +157,11 @@ namespace BookLibraryV1
             List<String> authors = new List<String>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Id FROM Authors WHERE FullName LIKE '%"+filter+"%'";
+                command.CommandText = "SELECT AuthorId FROM Authors WHERE FullName LIKE '%"+filter+"%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    authors.Add(reader.GetString(0));
+                    authors.Add(reader.GetInt32(0).ToString());
                 }
                 return authors;
             }
@@ -163,7 +173,7 @@ namespace BookLibraryV1
             using(SQLiteCommand command = connection.CreateCommand())
             {
                 List<String> authorDetails=new List<String>();
-                command.CommandText = "SELECT FirstName, MiddleName, LastName FROM Authors WHERE Id=@Id";
+                command.CommandText = "SELECT FirstName, MiddleName, LastName FROM Authors WHERE AuthorId=@Id";
                 command.Parameters.Add(new SQLiteParameter("@Id", id));
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -183,7 +193,7 @@ namespace BookLibraryV1
             stringBuilder.Append($"{nFName} ").Append($"{nMName} ").Append($"{nLName} ");
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "UPDATE Authors SET FirstName=@fName, MiddleName=@mName, LastName=@lName, FullName=@fName WHERE Id=@iD";
+                command.CommandText = "UPDATE Authors SET FirstName=@fName, MiddleName=@mName, LastName=@lName, FullName=@fName WHERE AuthorId=@iD";
                 command.Parameters.Add(new SQLiteParameter("@iD", iD));
                 command.Parameters.Add(new SQLiteParameter("@fName", nFName));
                 command.Parameters.Add(new SQLiteParameter("@mName", nMName));
@@ -193,6 +203,67 @@ namespace BookLibraryV1
             }
             return stringBuilder.ToString();
         } 
-        
+        public int checkAuthorLocation(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT AuthorId FROM Authors WHERE Id = @id";
+                command.Parameters.Add(new SQLiteParameter("@Id", id));  
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+                return -1;
+            }
+        }
+        public String getAuthorBookId(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Id FROM Authors WHERE AuthorId=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", id));
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+                return null;
+            }
+        }
+        public int addCustomAuthor(Dictionary<String, String> author)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT AuthorId, FullName FROM Authors WHERE FullName=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", author["FullName"]));
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (reader.GetString(1).Equals(author["FullName"])) {
+                        return reader.GetInt32(0);
+                    }
+                }
+                reader.Close();
+                command.CommandText = "INSERT INTO [Authors] VALUES(@AuthorId, @Id,@FirstName,@MiddleName,@LastName,@FullName)";
+                command.Parameters.Add(new SQLiteParameter("@AuthorId", 0));
+                command.Parameters.Add(new SQLiteParameter("@Id", author["Id"]));
+                command.Parameters.Add(new SQLiteParameter("@FirstName", author["FirstName"]));
+                command.Parameters.Add(new SQLiteParameter("@MiddleName", author["MiddleName"]));
+                command.Parameters.Add(new SQLiteParameter("@LastName", author["LastName"]));
+                command.Parameters.Add(new SQLiteParameter("@FullName", author["FullName"]));
+                command.ExecuteNonQuery();
+                return (int)connection.LastInsertRowId;
+            }
+        }
+        public void deleteAuthor(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "DELETE FROM Authors WHERE AuthorId=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", id));
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

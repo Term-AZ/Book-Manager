@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
             this.SelectFile = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
             this.BookTitleTextBox = new System.Windows.Forms.TextBox();
@@ -73,6 +73,7 @@
             this.Series = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ViewSelection = new System.Windows.Forms.ComboBox();
             this.ChangeViewBtn = new System.Windows.Forms.Button();
+            this.UpdateAllBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -223,11 +224,11 @@
             // 
             // updateBtnAuthor
             // 
-            this.updateBtnAuthor.Location = new System.Drawing.Point(555, 470);
+            this.updateBtnAuthor.Location = new System.Drawing.Point(552, 469);
             this.updateBtnAuthor.Name = "updateBtnAuthor";
-            this.updateBtnAuthor.Size = new System.Drawing.Size(75, 23);
+            this.updateBtnAuthor.Size = new System.Drawing.Size(139, 23);
             this.updateBtnAuthor.TabIndex = 21;
-            this.updateBtnAuthor.Text = "Update";
+            this.updateBtnAuthor.Text = "Update For Book";
             this.updateBtnAuthor.UseVisualStyleBackColor = true;
             this.updateBtnAuthor.Click += new System.EventHandler(this.updateBtnAuthor_Click);
             // 
@@ -423,10 +424,10 @@
             this.Title,
             this.Author,
             this.Series});
-            listViewGroup2.Header = "Title";
-            listViewGroup2.Name = "Title";
+            listViewGroup1.Header = "Title";
+            listViewGroup1.Name = "Title";
             this.ViewBooksListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup2});
+            listViewGroup1});
             this.ViewBooksListView.HideSelection = false;
             this.ViewBooksListView.Location = new System.Drawing.Point(22, 50);
             this.ViewBooksListView.Name = "ViewBooksListView";
@@ -477,11 +478,22 @@
             this.ChangeViewBtn.UseVisualStyleBackColor = true;
             this.ChangeViewBtn.Click += new System.EventHandler(this.ChangeViewBtn_Click);
             // 
+            // UpdateAllBtn
+            // 
+            this.UpdateAllBtn.Location = new System.Drawing.Point(552, 498);
+            this.UpdateAllBtn.Name = "UpdateAllBtn";
+            this.UpdateAllBtn.Size = new System.Drawing.Size(139, 23);
+            this.UpdateAllBtn.TabIndex = 47;
+            this.UpdateAllBtn.Text = "Update For All";
+            this.UpdateAllBtn.UseVisualStyleBackColor = true;
+            this.UpdateAllBtn.Click += new System.EventHandler(this.UpdateAllBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1132, 700);
+            this.Controls.Add(this.UpdateAllBtn);
             this.Controls.Add(this.ChangeViewBtn);
             this.Controls.Add(this.ViewSelection);
             this.Controls.Add(this.ViewBooksListView);
@@ -576,6 +588,7 @@
         private System.Windows.Forms.ComboBox ViewSelection;
         private System.Windows.Forms.Button ChangeViewBtn;
         private System.Windows.Forms.ColumnHeader Id;
+        private System.Windows.Forms.Button UpdateAllBtn;
     }
 }
 

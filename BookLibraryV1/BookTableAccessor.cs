@@ -17,10 +17,12 @@ namespace BookLibraryV1
         Form1 form;
         SQLiteConnection connection;
         FileReader fileReader;
-        public BookTableAccessor(Form1 forms, SQLiteConnection conn)
+        AuthorTableAccessor authorTableAccessor;
+        public BookTableAccessor(Form1 forms, SQLiteConnection conn, AuthorTableAccessor aT)
         {
             form = forms;
             connection = conn;
+            authorTableAccessor = aT;
         }
         /// <summary>
         /// Creates book table
@@ -29,11 +31,10 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                String sql = "CREATE TABLE if not exists Books (Id INTEGER NOT NULL, Title VARCHAR(32) NOT NULL,AuthorID NOT NULL,Series VARCHAR(32), SeriesNum INTEGER, Directory TEXT NOT NULL,Genre VARCHAR(32) NOT NULL,Keywords TEXT,Annotation TEXT NOT NULL,Publisher TEXT NOT NULL,CONSTRAINT PK_Books PRIMARY KEY(Id AUTOINCREMENT), FOREIGN KEY(AuthorID) REFERENCES Authors(Id))";
+                String sql = "CREATE TABLE if not exists Books (Id INTEGER NOT NULL, Title VARCHAR(32) NOT NULL,AuthorID INTEGER NOT NULL,Series VARCHAR(32), SeriesNum INTEGER, Directory TEXT NOT NULL,Genre VARCHAR(32) NOT NULL,Keywords TEXT,Annotation TEXT NOT NULL,Publisher TEXT NOT NULL, ImageId INTEGER, CONSTRAINT PK_Books PRIMARY KEY(Id AUTOINCREMENT), FOREIGN KEY(AuthorID) REFERENCES Authors(Id))";
                 command.CommandText = sql;
                 command.ExecuteNonQuery();
             }
-           
         }
         /// <summary>
         /// Resets table
@@ -57,10 +58,10 @@ namespace BookLibraryV1
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "INSERT INTO [Books] VALUES (@Id,@Title,@AuthorID,@Series,@SeriesNum,@Directory,@Genre,@Keywords,@Annotation,@Publisher)";
+                command.CommandText = "INSERT INTO [Books] VALUES (@Id,@Title,@AuthorID,@Series,@SeriesNum,@Directory,@Genre,@Keywords,@Annotation,@Publisher,@ImageId)";
                 command.Parameters.Add(new SQLiteParameter("@Id",0));
                 command.Parameters.Add(new SQLiteParameter("@Title", book["Title"]));
-                command.Parameters.Add(new SQLiteParameter("@AuthorID", book["AuthorID"]));
+                command.Parameters.Add(new SQLiteParameter("@AuthorID", Int32.Parse(book["AuthorId"])));
                 command.Parameters.Add(new SQLiteParameter("@Series", book["Series"]));
                 command.Parameters.Add(new SQLiteParameter("@SeriesNum", Int32.Parse(book["SeriesNum"])));
                 command.Parameters.Add(new SQLiteParameter("@Directory", book["Directory"]));
@@ -68,6 +69,7 @@ namespace BookLibraryV1
                 command.Parameters.Add(new SQLiteParameter("@Keywords", book["Keywords"]));
                 command.Parameters.Add(new SQLiteParameter("@Annotation", book["Annotation"]));
                 command.Parameters.Add(new SQLiteParameter("@Publisher", book["Publisher"]));
+                command.Parameters.Add(new SQLiteParameter("@ImageId", Int32.Parse(book["ImageId"])));
                 command.ExecuteNonQuery();
             }
 
@@ -90,7 +92,7 @@ namespace BookLibraryV1
                     {
                         {"Id", reader.GetInt32(0).ToString() },
                         {"Title", reader.GetString(1) },
-                        {"AuthorId", reader.GetString(2) },
+                        {"AuthorId", reader.GetInt32(2).ToString() },
                         {"Series", reader.GetString(3) },
                     });
                 }
@@ -103,7 +105,7 @@ namespace BookLibraryV1
             List<Dictionary<String,String>> books = new List<Dictionary<String,String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id = Books.AuthorId";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId = Books.AuthorId ORDER BY FullName";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -157,7 +159,7 @@ namespace BookLibraryV1
                     {
                         { "Id", reader.GetInt32(0).ToString()},
                         { "Title", reader.GetString(1)},
-                        { "AuthorId", reader.GetString(2)},
+                        { "AuthorId", reader.GetInt32(2).ToString()},
                         { "Series", reader.GetString(3)}
                     });
                 }
@@ -177,7 +179,7 @@ namespace BookLibraryV1
                     {
                         { "Id", reader.GetInt32(0).ToString()},
                         { "Title", reader.GetString(1)},
-                        { "AuthorId", reader.GetString(2)},
+                        { "AuthorId",reader.GetInt32(2).ToString()},
                         { "Series", reader.GetString(3)}
                     });
                 }
@@ -197,7 +199,7 @@ namespace BookLibraryV1
                     {
                         { "Id", reader.GetInt32(0).ToString()},
                         { "Title", reader.GetString(1)},
-                        { "AuthorId", reader.GetString(2)},
+                        { "AuthorId", reader.GetInt32(2).ToString()},
                         { "Series", reader.GetString(3)}
                     });
                 }
@@ -217,7 +219,7 @@ namespace BookLibraryV1
                     {
                         { "Id", reader.GetInt32(0).ToString()},
                         { "Title", reader.GetString(1)},
-                        { "AuthorId", reader.GetString(2)},
+                        { "AuthorId", reader.GetInt32(2).ToString()},
                         { "Series", reader.GetString(3)}
                     });
                 }
@@ -263,7 +265,7 @@ namespace BookLibraryV1
                         {
                             Name = d["AuthorId"],
                             Text = d["Series"],
-                            Tag = d["AuthorId"]
+                            Tag = "Series"
                         });
                         //add book node to the series node
                         bookDetails[d["AuthorId"]].Last().Nodes.Add(new TreeNode()
@@ -292,7 +294,7 @@ namespace BookLibraryV1
             List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id = Books.AuthorId WHERE Books.Title LIKE '%" + filter + "%'";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId = Books.AuthorId WHERE Books.Title LIKE '%" + filter + "%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -311,7 +313,7 @@ namespace BookLibraryV1
             List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id = Books.AuthorId WHERE AuthorId = @id";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId = Books.AuthorId WHERE Books.AuthorId = @id";
                 command.Parameters.Add(new SQLiteParameter("@id", ""));
                 SQLiteDataReader reader;
                 foreach (String i in ids)
@@ -338,7 +340,7 @@ namespace BookLibraryV1
             List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Genre LIKE '%" + filter + "%'";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId=Books.AuthorId WHERE Books.Genre LIKE '%" + filter + "%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -358,7 +360,7 @@ namespace BookLibraryV1
             List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Keywords LIKE '%" + filter + "%'";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId=Books.AuthorId WHERE Books.Keywords LIKE '%" + filter + "%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -378,7 +380,7 @@ namespace BookLibraryV1
             List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Publisher LIKE '%" + filter + "%'";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId=Books.AuthorId WHERE Books.Publisher LIKE '%" + filter + "%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -398,7 +400,7 @@ namespace BookLibraryV1
             List<Dictionary<String, String>> books = new List<Dictionary<String, String>>();
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.Id=Books.AuthorId WHERE Books.Series LIKE '%" + filter + "%'";
+                command.CommandText = "SELECT Books.Id, Books.Title, Books.Series, FullName FROM Books INNER JOIN Authors ON Authors.AuthorId=Books.AuthorId WHERE Books.Series LIKE '%" + filter + "%'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -426,7 +428,7 @@ namespace BookLibraryV1
             {
                 Dictionary<String,String> bookDetails = new Dictionary<String, String>();
                 bookDetails["SeriesNum"] = "";
-                command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, SeriesNum, AuthorId FROM Books WHERE Id=@Id";
+                command.CommandText = "SELECT Title, Series, Directory, Genre, Annotation, Publisher, SeriesNum, AuthorId, ImageId FROM Books WHERE Id=@Id";
                 command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(id)));
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read()) 
@@ -438,7 +440,8 @@ namespace BookLibraryV1
                     bookDetails["Annotation"] = reader.GetString(4);
                     bookDetails["Publisher"] = reader.GetString(5);
                     bookDetails["SeriesNum"] = reader.GetInt32(6).ToString();
-                    bookDetails["AuthorId"] = reader.GetString(7);
+                    bookDetails["AuthorId"] = reader.GetInt32(7).ToString();
+                    bookDetails["ImageId"] = reader.GetInt32(8).ToString();
                 }
                 return bookDetails;
             }
@@ -497,7 +500,7 @@ namespace BookLibraryV1
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    return reader.GetString(0);
+                    return reader.GetInt32(0).ToString();
                 }
                 return "";
             }
@@ -620,7 +623,7 @@ namespace BookLibraryV1
                     {
                         Name = reader.GetInt32(0).ToString(),
                         Text = reader.GetString(1),
-                        Tag = reader.GetString(2)
+                        Tag = reader.GetInt32(2).ToString()
                     });
                 }
                 return treeNodes;
@@ -637,6 +640,16 @@ namespace BookLibraryV1
                 command.ExecuteNonQuery();
             }
         }
+        public void updateSeriesForBook(String nName, String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "UPDATE Books SET SERIES=@s WHERE Id=@id";
+                command.Parameters.Add(new SQLiteParameter("@s", nName));
+                command.Parameters.Add(new SQLiteParameter("@id", id));
+                command.ExecuteNonQuery();
+            }
+        }
         public void updateSeriesNum(String nNum, String bookId)
         {
             using (SQLiteCommand command = connection.CreateCommand())
@@ -645,6 +658,25 @@ namespace BookLibraryV1
                 command.Parameters.Add(new SQLiteParameter("@nN", nNum));
                 command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(bookId)));
                 command.ExecuteNonQuery();
+            }
+        }
+        public void updateBookAuthorId(int id, int bookId)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "UPDATE Books SET AuthorId=@id WHERE Id=@bId";
+                command.Parameters.Add(new SQLiteParameter("@id", id));
+                command.Parameters.Add(new SQLiteParameter("@bId", bookId));
+                command.ExecuteNonQuery();
+            }
+        }
+        public bool checkHowManyBooksAuthorHas(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT COUNT(AuthorId) FROM Books WHERE AuthorId=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
+                return Convert.ToInt32(command.ExecuteScalar()) >0;
             }
         }
     }

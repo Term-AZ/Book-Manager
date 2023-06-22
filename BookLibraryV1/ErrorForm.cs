@@ -15,12 +15,8 @@ namespace BookLibraryV1
         public ErrorForm(String error)
         {
             InitializeComponent();
-
             errorLbl.Text = error;
         }
-
-
-
         private void button1_Click(object sender, EventArgs e)
         {
             this.Close();
