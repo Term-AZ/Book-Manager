@@ -113,7 +113,7 @@ namespace BookLibraryV1
                         {"Id", reader.GetInt32(0).ToString() },
                         {"Title", reader.GetString(1)},
                         {"Series", reader.GetString(2)},
-                        {"Author",reader.GetString(3)}
+                        {"Author",reader.GetString(3).Trim()}
                     });
                 }
                 return books;
@@ -677,6 +677,34 @@ namespace BookLibraryV1
                 command.CommandText = "SELECT COUNT(AuthorId) FROM Books WHERE AuthorId=@id";
                 command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
                 return Convert.ToInt32(command.ExecuteScalar()) >0;
+            }
+        }
+        public int getImageId(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT ImageId FROM Books WHERE Id=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+                return -1;
+            }
+        }
+        public String getBookGenre(String id) 
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT Genre FROM Books WHERE Id=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+                return "";
             }
         }
     }

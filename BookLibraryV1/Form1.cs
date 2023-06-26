@@ -25,6 +25,7 @@ namespace BookLibraryV1
         GenreTableAccessor genreTableAccessor;
         ImageTableAccessor imageTableAccessor;
         SQLiteConnection connection;
+        Search searcher;
         private String URL = "";
         public List<string> files = new List<string>();
         public List<string> booksTitles = new List<string>();
@@ -36,6 +37,8 @@ namespace BookLibraryV1
         String authorId;
         List<String> authorDetails;
         Dictionary<String, String> bookDetails;
+
+        bool genreUpdated = false;
         
 
 
@@ -47,6 +50,7 @@ namespace BookLibraryV1
             ViewBooksListView.Visible = false;
             UpdateAllBtn.Visible = false;
             UpdateAllBtn.Enabled = false;
+            ListOfGenresComboBox.Enabled = false;
             try
             {
                 string workingDirectory = Environment.CurrentDirectory;
@@ -59,11 +63,12 @@ namespace BookLibraryV1
                 }
                 connection = new SQLiteConnection($"data source = {URL}\\Library.db");
                 connection.Open();
-                imageTableAccessor = new ImageTableAccessor(this, connection);
+                imageTableAccessor = new ImageTableAccessor(this, connection, URL);
                 authorTableAccessor = new AuthorTableAccessor(this, connection);
                 bookTableAccessor = new BookTableAccessor(this, connection, authorTableAccessor);
                 genreTableAccessor = new GenreTableAccessor(this, URL, connection);
                 fileReader = new FileReader(this, authorTableAccessor, bookTableAccessor, genreTableAccessor, imageTableAccessor);
+                searcher = new Search();
 
                 //altMainNode = new TreeNode();
                 //altMainNode.Text = "Books Without Authors";
@@ -77,14 +82,13 @@ namespace BookLibraryV1
 
 
                 CoverImage.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                EditGenresComboBox.SelectedIndex = 0;
-                EditGenresComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
                 SearchTypeComboBox.SelectedIndex = 0;
                 SearchTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
                 ViewSelection.SelectedIndex = 0;
 
                 createTables();
+
+                populateGenres();
                 populateView("default1");
             }
             catch (Exception ex)
@@ -158,7 +162,6 @@ namespace BookLibraryV1
             if (ViewBooks.Visible == true)
             {
                 Dictionary<String, TreeNode> authors = new Dictionary<string, TreeNode>();
-                Dictionary<String, List<TreeNode>> books = new Dictionary<string, List<TreeNode>>();
                 mainNode.Nodes.Clear();
                 //altMainNode.Nodes.Clear();
                 switch (SearchTypeComboBox.Items[SearchTypeComboBox.SelectedIndex].ToString())
@@ -175,28 +178,24 @@ namespace BookLibraryV1
                         {
                             s.Add(t.Key);
                         }
-                        books = bookTableAccessor.searchByAuthorIdTree(s);
-                        populateTreeViewByThreeLayers(authors, books);
+                        populateTreeViewByThreeLayers(authors, bookTableAccessor.searchByAuthorIdTree(s));
                         break;
                     case "Search By Genre":
                         mainNode.Text = "Authors";
-                        books = bookTableAccessor.searchByGenreTree(SearchTextBox.Text);
-                        populateTreeViewByBook(books);
+
+                        populateTreeViewByBook(bookTableAccessor.searchByGenreTree(SearchTextBox.Text));
                         break;
                     case "Search By Keywords":
                         mainNode.Text = "Books";
-                        books = bookTableAccessor.searchByKeywordsTree(SearchTextBox.Text);
-                        populateTreeViewByBook(books);
+                        populateTreeViewByBook(bookTableAccessor.searchByKeywordsTree(SearchTextBox.Text));
                         break;
                     case "Search By Publisher":
                         mainNode.Text = "Books";
-                        books = bookTableAccessor.searchByPublisherTree(SearchTextBox.Text);
-                        populateTreeViewByBook(books);
+                        populateTreeViewByBook(bookTableAccessor.searchByPublisherTree(SearchTextBox.Text));
                         break;
                     case "Search By Series":
                         mainNode.Text = "Books";
-                        books = bookTableAccessor.searchBySeriesTree(SearchTextBox.Text);
-                        populateTreeViewByBook(books);
+                        populateTreeViewByBook(bookTableAccessor.searchBySeriesTree(SearchTextBox.Text));
                         break;
                 }
             }
@@ -229,8 +228,6 @@ namespace BookLibraryV1
 
         private void populateView(String type)
         {
-            Dictionary<String, TreeNode> authors = new Dictionary<string, TreeNode>();
-            Dictionary<String, List<TreeNode>> books = new Dictionary<string, List<TreeNode>>();
             mainNode.Nodes.Clear();
             //altMainNode.Nodes.Clear();
             switch (type)
@@ -239,9 +236,7 @@ namespace BookLibraryV1
                     if (ViewBooks.Visible == true)
                     {
                         mainNode.Text = "Authors";
-                        authors = authorTableAccessor.getAuthors();
-                        books = bookTableAccessor.getBooksTree();
-                        populateTreeViewByThreeLayers(authors, books);
+                        populateTreeViewByThreeLayers(authorTableAccessor.getAuthors(), bookTableAccessor.getBooksTree());
                     }
                     else
                     {
@@ -250,9 +245,7 @@ namespace BookLibraryV1
                     break;
                 case "default1":
                     mainNode.Text = "Authors";
-                    authors = authorTableAccessor.getAuthors();
-                    books = bookTableAccessor.getBooksTree();
-                    populateTreeViewByThreeLayers(authors, books);
+                    populateTreeViewByThreeLayers(authorTableAccessor.getAuthors(), bookTableAccessor.getBooksTree());
                     populateListViewByBook(bookTableAccessor.getBooksList());
                     break;
                 case "reset":
@@ -263,16 +256,12 @@ namespace BookLibraryV1
                     else
                     {
                         mainNode.Text = "Authors";
-                        authors = authorTableAccessor.getAuthors();
-                        books = bookTableAccessor.getBooksTree();
-                        populateTreeViewByThreeLayers(authors, books);
+                        populateTreeViewByThreeLayers(authorTableAccessor.getAuthors(), bookTableAccessor.getBooksTree());
                     }
                     break;
                 case "tree":
                     mainNode.Text = "Authors";
-                    authors = authorTableAccessor.getAuthors();
-                    books = bookTableAccessor.getBooksTree();
-                    populateTreeViewByThreeLayers(authors, books);
+                    populateTreeViewByThreeLayers(authorTableAccessor.getAuthors(), bookTableAccessor.getBooksTree());
                     break;
             }
         }
@@ -361,7 +350,6 @@ namespace BookLibraryV1
         }
         private Image createCover(byte[] s)
         {
-            
             using (var ms = new MemoryStream(s))
             {
                 return Image.FromStream(ms);
@@ -421,120 +409,6 @@ namespace BookLibraryV1
                 }
             }
         }
-
-        private void UpdateSeriesName_Click(object sender, EventArgs e)
-        {
-            if (ViewBooks.Visible == true)
-            {
-                if (ViewBooks.SelectedNode.Tag == "Series")
-                {
-                    bookTableAccessor.updateSeriesName(SeriesNameTextBox.Text, ViewBooks.SelectedNode.Text, ViewBooks.SelectedNode.Parent.Name);
-                    ViewBooks.SelectedNode.Text = SeriesNameTextBox.Text;
-                }
-                else
-                {
-                    bookTableAccessor.updateSeriesForBook(SeriesNameTextBox.Text, ViewBooks.SelectedNode.Name);
-                }
-            }
-            else
-            {
-                if (ViewBooksListView.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-                var item = ViewBooksListView.SelectedItems[0];
-                bookTableAccessor.updateSeriesName(SeriesNameTextBox.Text, item.SubItems[3].Text, bookTableAccessor.getAuthorId(item.SubItems[0].Text));
-                ViewBooksListView.SelectedItems[0].SubItems[3].Text = SeriesNameTextBox.Text;
-            } 
-        }
-
-        private void UpdateSeriesNumBtn_Click(object sender, EventArgs e)
-        {
-            if (ViewBooks.Visible == true)
-            {
-                TreeNode cNode = ViewBooks.SelectedNode;
-                TreeNode pNode = cNode.Parent;
-                if (pNode.Tag != "Author")
-                {
-                    bookTableAccessor.updateSeriesNum(SeriesNumberTextBox.Text, cNode.Name);
-                    cNode.Remove();
-                    pNode.Nodes.Insert(Int32.Parse(SeriesNumberTextBox.Text.Trim()), cNode);
-                }
-            }
-            else
-            {
-                if (ViewBooksListView.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-                var item = ViewBooksListView.SelectedItems[0];
-                bookTableAccessor.updateSeriesNum(SeriesNumberTextBox.Text, item.SubItems[0].Text);
-            }
-        }
-        private void updateBtnAuthor_Click(object sender, EventArgs e)
-        {
-            StringBuilder sb = new StringBuilder();
-            if (ViewBooks.Visible == true)
-            {
-                if(ViewBooks.SelectedNode.Tag == "Author")
-                {
-                    ViewBooks.SelectedNode.Text = sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString();
-                    authorTableAccessor.updateAuthor(ViewBooks.SelectedNode.Name, AuthorFNTextBox.Text.Trim(), AuthorMNTextBox.Text.Trim(), AuthorLNTextBox.Text.Trim());
-                    return;
-                }
-                else
-                {
-                    bool d = false;
-                    string iD = ViewBooks.SelectedNode.Parent.Name.Trim();
-                    if (ViewBooks.SelectedNode.Parent.GetNodeCount(false) == 1)
-                    {
-                        d = true;
-                    }
-                    String bookId = ViewBooks.SelectedNode.Name;
-                    //ViewBooks.SelectedNode.Parent.Text = authorTableAccessor.updateAuthor(iD, AuthorFNTextBox.Text, AuthorMNTextBox.Text, AuthorLNTextBox.Text);
-                    String s = sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString();
-                    int newAuthorId = authorTableAccessor.addCustomAuthor(new Dictionary<string, string>
-                {
-                    {"Id", authorTableAccessor.getAuthorBookId(iD)},
-                    {"FirstName",AuthorFNTextBox.Text.Trim() },
-                    {"MiddleName",AuthorMNTextBox.Text.Trim() },
-                    {"LastName",AuthorLNTextBox.Text.Trim() },
-                    {"FullName", s }
-                });
-                    bookTableAccessor.updateBookAuthorId(newAuthorId, Int32.Parse(bookId));
-                    if (d)
-                    {
-                        authorTableAccessor.deleteAuthor(iD);
-                    }
-                    populateView("tree");
-                }            
-                //addToTreeView(index, Int32.Parse(iD), s, bookId, bookTitle);
-            }
-            else
-            {
-                if (ViewBooksListView.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-                var item = ViewBooksListView.SelectedItems[0];
-                String currentId = bookTableAccessor.getAuthorId(item.SubItems[0].Text);
-                ViewBooksListView.SelectedItems[0].SubItems[2].Text = sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString();
-                int newAuthorId = authorTableAccessor.addCustomAuthor(new Dictionary<string, string>
-                {
-                    {"Id", authorTableAccessor.getAuthorBookId(item.SubItems[0].Text)},
-                    {"FirstName",AuthorFNTextBox.Text.Trim() },
-                    {"MiddleName",AuthorMNTextBox.Text.Trim() },
-                    {"LastName",AuthorLNTextBox.Text.Trim() },
-                    {"FullName", sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString() }
-                });
-                bookTableAccessor.updateBookAuthorId(newAuthorId, Int32.Parse(item.SubItems[0].Text));
-                if (!bookTableAccessor.checkHowManyBooksAuthorHas(currentId))
-                {
-                    authorTableAccessor.deleteAuthor(currentId);
-                }
-                populateView("tree");
-            }
-        }
         private void addToTreeView(int index, int authorId, String authorName, String bookId, String bookTitle)
         {
             if (mainNode.Nodes.ContainsKey(authorId.ToString()))
@@ -570,67 +444,8 @@ namespace BookLibraryV1
         }
         private void addToListView()
         {
-
         }
 
-        private void UpdateBtnBook_Click(object sender, EventArgs e)
-        {
-            if (ViewBooks.Visible == true)
-            {
-                TreeNode currentNode = ViewBooks.SelectedNode;
-                String id = ViewBooks.SelectedNode.Name.Trim();
-                //TreeNode parentNode = currentNode.Parent;
-                currentNode.Text = bookTableAccessor.updateBook(id, BookTitleTextBox.Text).Text;
-            }
-            else
-            {
-                if (ViewBooksListView.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-                var items = ViewBooksListView.SelectedItems[0];
-                ViewBooksListView.SelectedItems[0].SubItems[1].Text = bookTableAccessor.updateBook(items.SubItems[0].Text,BookTitleTextBox.Text).Text;
-            }
-        }
-        private void EditGenreBtn_Click(object sender, EventArgs e)
-        {
-            if (ViewBooks.Visible == true)
-            {
-                switch (EditGenresComboBox.Items[EditGenresComboBox.SelectedIndex].ToString())
-                {
-                    case "Edit Selected Genre":
-                        populateGenreBox(bookTableAccessor.editGenre(ViewBooks.SelectedNode.Name.Trim(), genreText.Text, GenreListBox.SelectedIndex));
-                        break;
-                    case "Delete Selected Genre":
-                        populateGenreBox(bookTableAccessor.deleteGenre(ViewBooks.SelectedNode.Name.Trim(), GenreListBox.SelectedIndex));
-                        break;
-                    case "Add New Genre":
-                        populateGenreBox(bookTableAccessor.addGenre(ViewBooks.SelectedNode.Name.Trim(), genreText.Text));
-                        break;
-                }
-            }
-            else
-            {
-                if (ViewBooksListView.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-                var item = ViewBooksListView.SelectedItems[0];
-                switch (EditGenresComboBox.Items[EditGenresComboBox.SelectedIndex].ToString())
-                {
-                    case "Edit Selected Genre":
-                        populateGenreBox(bookTableAccessor.editGenre(item.SubItems[0].Text, genreText.Text, GenreListBox.SelectedIndex));
-                        break;
-                    case "Delete Selected Genre":
-                        populateGenreBox(bookTableAccessor.deleteGenre(item.SubItems[0].Text, GenreListBox.SelectedIndex));
-                        break;
-                    case "Add New Genre":
-                        populateGenreBox(bookTableAccessor.addGenre(item.SubItems[0].Text, genreText.Text));
-                        break;
-                }
-            }
-
-        }
 
         private void updateBtn_Click(object sender, EventArgs e)
         {
@@ -666,7 +481,14 @@ namespace BookLibraryV1
             bookId = item.SubItems[0].Text;
             var bookDetails = bookTableAccessor.getBook(bookId);
             var authorDetails = authorTableAccessor.getAuthor(bookDetails["AuthorId"]);
+            ListOfGenresComboBox.Enabled = true;
             populateInfo(authorDetails, bookDetails);
+            BookTitleTextBox.Tag = BookTitleTextBox.Text;
+            SeriesNameTextBox.Tag = SeriesNameTextBox.Text;
+            SeriesNumberTextBox.Tag = SeriesNumberTextBox.Text;
+            AuthorFNTextBox.Tag = AuthorFNTextBox.Text;
+            AuthorMNTextBox.Tag = AuthorMNTextBox.Text;
+            AuthorLNTextBox.Tag = AuthorLNTextBox.Text;
 
         }
         private void ViewBooks_AfterSelect(object sender, TreeViewEventArgs e)
@@ -675,19 +497,15 @@ namespace BookLibraryV1
             {
                 case "Author":
                     populateInfo(authorTableAccessor.getAuthor(ViewBooks.SelectedNode.Name.ToString()));
-                    updateBtnAuthor.Enabled = true;
-                    UpdateBtnBook.Enabled = false;
                     EditGenreBtn.Enabled = false;
-                    UpdateSeriesName.Enabled = false;
-                    UpdateSeriesNumBtn.Enabled = false;
+                    UploadImageBtn.Enabled = false;
+                    ListOfGenresComboBox.Enabled = false;
                     break;
                 case "Series":
                     populateInfo(authorTableAccessor.getAuthor(ViewBooks.SelectedNode.Parent.Name.ToString()),ViewBooks.SelectedNode.Text);
-                    updateBtnAuthor.Enabled = false;
-                    UpdateBtnBook.Enabled = false;
                     EditGenreBtn.Enabled = false;
-                    UpdateSeriesName.Enabled = true;
-                    UpdateSeriesNumBtn.Enabled = false;
+                    UploadImageBtn.Enabled = false;
+                    ListOfGenresComboBox.Enabled = false;
                     break;
                 default:
                     if (ViewBooks.SelectedNode.FirstNode == null && ViewBooks.SelectedNode.Parent != null)
@@ -697,14 +515,18 @@ namespace BookLibraryV1
                         authorDetails = authorTableAccessor.getAuthor(ViewBooks.SelectedNode.Tag.ToString());
                         bookDetails = bookTableAccessor.getBook(bookId);
                         populateInfo(authorDetails, bookDetails);
-                        updateBtnAuthor.Enabled = true;
-                        UpdateBtnBook.Enabled = true;
                         EditGenreBtn.Enabled = true;
-                        UpdateSeriesName.Enabled = true;
-                        UpdateSeriesNumBtn.Enabled = true;
+                        UploadImageBtn.Enabled = true;
+                        ListOfGenresComboBox.Enabled = true;
                     }
                     break;
             }
+            BookTitleTextBox.Tag = BookTitleTextBox.Text;
+            SeriesNameTextBox.Tag = SeriesNameTextBox.Text;
+            SeriesNumberTextBox.Tag = SeriesNumberTextBox.Text;
+            AuthorFNTextBox.Tag = AuthorFNTextBox.Text;
+            AuthorMNTextBox.Tag = AuthorMNTextBox.Text;
+            AuthorLNTextBox.Tag = AuthorLNTextBox.Text;
         }
         private void populateInfo(List<String> authorDetails, Dictionary<String,String> bookDetails)
         {
@@ -715,7 +537,6 @@ namespace BookLibraryV1
                 AuthorMNTextBox.Text = authorDetails.ElementAt(1);
                 AuthorLNTextBox.Text = authorDetails.ElementAt(2);
                 AnnotationBox.Text = bookDetails["Annotation"];
-                CoverImage.Image = createCover(imageTableAccessor.getCover(bookDetails["ImageId"]));
             }
             catch (Exception a)
             {
@@ -723,7 +544,10 @@ namespace BookLibraryV1
                 AuthorMNTextBox.Text = "";
                 AuthorLNTextBox.Text = "";
                 AnnotationBox.Text = "";
+                
             }
+            CoverImage.Image = createCover(imageTableAccessor.getCover(bookDetails["ImageId"]));
+
             SeriesNameTextBox.Text = bookDetails["Series"];
             SeriesNumberTextBox.Text = bookDetails["SeriesNum"];
             populateGenreBox(bookDetails["Genre"]);
@@ -759,6 +583,201 @@ namespace BookLibraryV1
             var name = item.SubItems[2].Text;
             authorTableAccessor.updateAuthor(bookTableAccessor.getAuthorId(item.SubItems[0].Text), AuthorFNTextBox.Text, AuthorMNTextBox.Text, AuthorLNTextBox.Text);
             populateView("default1");
+        }
+
+        private void UploadImageBtn_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Title = "Select File";
+            dlg.InitialDirectory = $"{URL}";
+            dlg.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg";
+            DialogResult d = dlg.ShowDialog();
+
+            if (d == DialogResult.OK)
+            {
+                if (ViewBooks.Visible == true)
+                {
+                    imageTableAccessor.updateCover(dlg.FileName, bookTableAccessor.getImageId(ViewBooks.SelectedNode.Name));
+                }
+                else
+                {
+                    imageTableAccessor.updateCover(dlg.FileName, bookTableAccessor.getImageId(ViewBooksListView.SelectedItems[0].SubItems[0].Text));
+                }
+                CoverImage.Image = createCover(imageTableAccessor.getCover(bookDetails["ImageId"]));
+            }
+        }
+
+        private void UpdateAllFieldsBtn_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (ViewBooks.Visible == true)
+            {
+                if (!ViewBooks.SelectedNode.Tag.Equals("Author") && !ViewBooks.SelectedNode.Tag.Equals("Series") && !BookTitleTextBox.Tag.Equals(BookTitleTextBox.Text))
+                {
+                    String id = ViewBooks.SelectedNode.Name.Trim();
+                    //TreeNode parentNode = currentNode.Parent;
+                    ViewBooks.SelectedNode.Text = bookTableAccessor.updateBook(id, BookTitleTextBox.Text).Text;
+                }
+                if(!AuthorFNTextBox.Tag.Equals(AuthorFNTextBox.Text) || !AuthorMNTextBox.Tag.Equals(AuthorMNTextBox.Text) ||!AuthorLNTextBox.Tag.Equals(AuthorLNTextBox.Text))
+                {
+                    if (ViewBooks.SelectedNode.Tag == "Author")
+                    {
+                        ViewBooks.SelectedNode.Text = sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString();
+                        authorTableAccessor.updateAuthor(ViewBooks.SelectedNode.Name, AuthorFNTextBox.Text.Trim(), AuthorMNTextBox.Text.Trim(), AuthorLNTextBox.Text.Trim());
+                        return;
+                    }
+                    else
+                    {
+                        bool d = false;
+                        string iD = ViewBooks.SelectedNode.Parent.Name.Trim();
+                        if (ViewBooks.SelectedNode.Parent.GetNodeCount(false) == 1)
+                        {
+                            d = true;
+                        }
+                        String bookId = ViewBooks.SelectedNode.Name;
+                        //ViewBooks.SelectedNode.Parent.Text = authorTableAccessor.updateAuthor(iD, AuthorFNTextBox.Text, AuthorMNTextBox.Text, AuthorLNTextBox.Text);
+                        String s = sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString();
+                        int newAuthorId = authorTableAccessor.addCustomAuthor(new Dictionary<string, string>
+                        {
+                            {"Id", authorTableAccessor.getAuthorBookId(iD)},
+                            {"FirstName",AuthorFNTextBox.Text.Trim() },
+                            {"MiddleName",AuthorMNTextBox.Text.Trim() },
+                            {"LastName",AuthorLNTextBox.Text.Trim() },
+                            {"FullName", s }
+                        });
+                        bookTableAccessor.updateBookAuthorId(newAuthorId, Int32.Parse(bookId));
+                        if (d)
+                        {
+                            authorTableAccessor.deleteAuthor(iD);
+                        }
+                        DirectoryTextBox.Text = searcher.searchTree(mainNode.Nodes, s).ToString();
+                    }
+                }
+                if(!SeriesNameTextBox.Tag.Equals(SeriesNameTextBox.Text) && !ViewBooks.SelectedNode.Tag.Equals("Author"))
+                {
+                    if (ViewBooks.SelectedNode.Tag == "Series")
+                    {
+                        bookTableAccessor.updateSeriesName(SeriesNameTextBox.Text, ViewBooks.SelectedNode.Text, ViewBooks.SelectedNode.Parent.Name);
+                        ViewBooks.SelectedNode.Text = SeriesNameTextBox.Text;
+                    }
+                    else
+                    {
+                        bookTableAccessor.updateSeriesForBook(SeriesNameTextBox.Text, ViewBooks.SelectedNode.Name);
+                    }
+                }
+                if(!SeriesNumberTextBox.Tag.Equals(SeriesNumberTextBox.Text) && !ViewBooks.SelectedNode.Tag.Equals("Author"))
+                {
+                    TreeNode cNode = ViewBooks.SelectedNode;
+                    TreeNode pNode = cNode.Parent;
+                    if (!pNode.Tag.Equals("Author"))
+                    {
+                        bookTableAccessor.updateSeriesNum(SeriesNumberTextBox.Text, cNode.Name);
+                        cNode.Remove();
+                        pNode.Nodes.Insert(Int32.Parse(SeriesNumberTextBox.Text.Trim()), cNode);
+                    }
+                }
+                if (genreUpdated)
+                {
+                    genreUpdated = false;
+                }
+            }
+            else
+            {
+                if (!BookTitleTextBox.Tag.Equals(BookTitleTextBox.Text))
+                {
+                    if (ViewBooksListView.SelectedItems.Count == 0)
+                    {
+                        return;
+                    }
+                    var items = ViewBooksListView.SelectedItems[0];
+                    ViewBooksListView.SelectedItems[0].SubItems[1].Text = bookTableAccessor.updateBook(items.SubItems[0].Text, BookTitleTextBox.Text).Text;
+                }
+                if (!AuthorFNTextBox.Tag.Equals(AuthorFNTextBox.Text) || !AuthorMNTextBox.Tag.Equals(AuthorMNTextBox.Text) || !AuthorLNTextBox.Tag.Equals(AuthorLNTextBox.Text))
+                {
+                    if (ViewBooksListView.SelectedItems.Count == 0)
+                    {
+                        return;
+                    }
+                    var item = ViewBooksListView.SelectedItems[0];
+                    String currentId = bookTableAccessor.getAuthorId(item.SubItems[0].Text);
+                    ViewBooksListView.SelectedItems[0].SubItems[2].Text = sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString();
+                    int newAuthorId = authorTableAccessor.addCustomAuthor(new Dictionary<string, string>
+                    {
+                        {"Id", authorTableAccessor.getAuthorBookId(item.SubItems[0].Text)},
+                        {"FirstName",AuthorFNTextBox.Text.Trim() },
+                        {"MiddleName",AuthorMNTextBox.Text.Trim() },
+                        {"LastName",AuthorLNTextBox.Text.Trim() },
+                        {"FullName", sb.Append($"{AuthorFNTextBox.Text.Trim()} ").Append($"{AuthorMNTextBox.Text.Trim()} ").Append(AuthorLNTextBox.Text.Trim()).ToString() }
+                    });
+                    bookTableAccessor.updateBookAuthorId(newAuthorId, Int32.Parse(item.SubItems[0].Text));
+                    if (!bookTableAccessor.checkHowManyBooksAuthorHas(currentId))
+                    {
+                        authorTableAccessor.deleteAuthor(currentId);
+                    }
+                }
+                if (!SeriesNameTextBox.Tag.Equals(SeriesNameTextBox.Text))
+                {
+                    if (ViewBooksListView.SelectedItems.Count == 0)
+                    {
+                        return;
+                    }
+                    var item = ViewBooksListView.SelectedItems[0];
+                    bookTableAccessor.updateSeriesName(SeriesNameTextBox.Text, item.SubItems[3].Text, bookTableAccessor.getAuthorId(item.SubItems[0].Text));
+                    ViewBooksListView.SelectedItems[0].SubItems[3].Text = SeriesNameTextBox.Text;
+                }
+                if (!SeriesNumberTextBox.Tag.Equals(SeriesNumberTextBox.Text))
+                {
+                    if (ViewBooksListView.SelectedItems.Count == 0)
+                    {
+                        return;
+                    }
+                    var item = ViewBooksListView.SelectedItems[0];
+                    bookTableAccessor.updateSeriesNum(SeriesNumberTextBox.Text, item.SubItems[0].Text);
+                }
+
+            }
+        }
+        public void populateGenres()
+        {
+            ListOfGenresComboBox.DataSource = genreTableAccessor.getGenres();
+        }
+
+        private void EditGenreBtn_Click(object sender, EventArgs e)
+        {
+            String id = "";
+            if (ViewBooks.Visible == true)
+            {
+                id = ViewBooks.SelectedNode.Name;
+                bookTableAccessor.addGenre(id, ListOfGenresComboBox.SelectedItem.ToString());
+            }
+            else
+            {
+                id = ViewBooksListView.SelectedItems[0].SubItems[0].Text;
+                bookTableAccessor.addGenre(id, ListOfGenresComboBox.SelectedItem.ToString());
+            }
+            populateGenreBox(bookTableAccessor.getBookGenre(id));
+        }
+        private void DeleteSelectedGenreBtn_Click(object sender, EventArgs e)
+        {
+            String id="";
+            int index = GenreListBox.SelectedIndex;
+            if (ViewBooks.Visible == true)
+            {
+                id = ViewBooks.SelectedNode.Name;
+            }
+            else
+            {
+                id = ViewBooksListView.SelectedItems[0].SubItems[0].Text;
+            }
+            bookTableAccessor.deleteGenre(id, index);
+            populateGenreBox(bookTableAccessor.getBookGenre(id));
+        }
+
+        private void ManageGenreBtn_Click(object sender, EventArgs e)
+        {
+           ManageGenres manageGenreForm = new ManageGenres(genreTableAccessor);
+           manageGenreForm.ShowDialog();
+           populateGenres();
         }
     }
 }

@@ -107,9 +107,16 @@
     </Compile>
     <Compile Include="GenreTableAccessor.cs" />
     <Compile Include="ImageTableAccessor.cs" />
+    <Compile Include="ManageGenres.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManageGenres.Designer.cs">
+      <DependentUpon>ManageGenres.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AuthorTableAccessor.cs" />
+    <Compile Include="Search.cs" />
     <EmbeddedResource Include="ErrorForm.resx">
       <DependentUpon>ErrorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -118,6 +125,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManageGenres.resx">
+      <DependentUpon>ManageGenres.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

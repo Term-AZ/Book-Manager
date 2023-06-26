@@ -15,10 +15,12 @@ namespace BookLibraryV1
     {
         Form1 form;
         SQLiteConnection connection;
-        public ImageTableAccessor(Form1 f, SQLiteConnection conn)
+        String URL;
+        public ImageTableAccessor(Form1 f, SQLiteConnection conn, String uRL)
         {
             form = f;
             connection = conn;
+            URL = uRL;
         }
         public void createTable()
         {
@@ -33,11 +35,23 @@ namespace BookLibraryV1
         }
         public void resetCoverTable()
         {
-            using (SQLiteCommand cmd = connection.CreateCommand())
+            using (SQLiteCommand command = connection.CreateCommand())
             {
                 string strSql = "DELETE FROM Covers";
-                cmd.CommandText = strSql;
-                cmd.ExecuteNonQuery();
+                command.CommandText = strSql;
+                command.ExecuteNonQuery();
+
+                byte[] image = File.ReadAllBytes($"{URL}\\defaultImage.jpg");
+
+                command.CommandText = "INSERT INTO Covers VALUES (@Id, @ImageCode)";
+                command.Parameters.Add(new SQLiteParameter("@Id", -1));
+                command.Parameters.Add(new SQLiteParameter()
+                {
+                    ParameterName = "@ImageCode",
+                    Value = image,
+                    DbType = System.Data.DbType.Binary
+                });
+                command.ExecuteNonQuery();
             }
         }
         public void addToCoverTable(String imageCode)
@@ -45,16 +59,26 @@ namespace BookLibraryV1
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 byte[] image = Convert.FromBase64String(imageCode);
-                //SqliteBlob sqliteBlob = new SqliteBlob(connection, "Covers", "ImageCode",2);
-               
                 command.CommandText = "INSERT INTO [Covers] VALUES(@Id, @ImageCode)";
                 command.Parameters.Add(new SQLiteParameter("@Id", 0));
-                command.Parameters.Add(new SQLiteParameter()
+                if (image.Length == 0)
                 {
-                    ParameterName = "@ImageCode",
-                    Value = image,
-                    DbType = System.Data.DbType.Binary
-                });
+                    command.Parameters.Add(new SQLiteParameter()
+                    {
+                        ParameterName = "@ImageCode",
+                        Value = null,
+                        DbType = System.Data.DbType.Binary
+                    });
+                }
+                else
+                {
+                    command.Parameters.Add(new SQLiteParameter()
+                    {
+                        ParameterName = "@ImageCode",
+                        Value = image,
+                        DbType = System.Data.DbType.Binary
+                    });
+                }
 
                /* SQLiteParameter param = new SQLiteParameter("@ImageCode", System.Data.DbType.Binary);
                 param.Value = image;*/
@@ -69,18 +93,49 @@ namespace BookLibraryV1
             {
                 byte[] image = { };
                 command.CommandText = "SELECT ImageCode FROM Covers WHERE Id=@id";
-                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
+                SQLiteParameter parameter = new SQLiteParameter("@id",id);
+                command.Parameters.Add(parameter);
                 SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                try
                 {
-                    image = (byte[])reader.GetValue(0);
+                    while (reader.Read())
+                    {
+                        return (byte[])reader.GetValue(0);
+                    }
+                    return image;
                 }
-                return image;
+                catch
+                {
+                    reader.Close();
+                    command.Parameters[0].Value = -1;
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        return (byte[])reader.GetValue(0);
+                    }
+                    return image;
+                }
             }
         }
         public int getRecentAdded()
         {
             return (int)connection.LastInsertRowId;
+        }
+        public void updateCover(String URL, int ID)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                byte[] image = File.ReadAllBytes(URL);
+                command.CommandText = "UPDATE Covers SET ImageCode=@image WHERE Id=@ID";
+                command.Parameters.Add(new SQLiteParameter("@ID", ID));
+                command.Parameters.Add(new SQLiteParameter()
+                {
+                    ParameterName = "@image",
+                    Value = image,
+                    DbType = System.Data.DbType.Binary
+                });
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
