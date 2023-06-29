@@ -16,27 +16,28 @@ namespace BookLibraryV1
         }
         public int searchTree(TreeNodeCollection tree, String s)
         {
+            int m = -1;
             int l = 0; 
-            int r = tree.Count -1;
-            while (l <= r)
+            int u = tree.Count -1;
+            while (l <= u)
             {
-                int m = l + (r - 1) / 2;
+                m = (l + u)/2;
                 int res = s.CompareTo(tree[m].Text);
 
                 if (res == 0)
                 {
-                    return m;
+                    return -1;
                 }
                 if (res > 0)
                 {
-                    l = m+1;
+                    l = m + 1;
                 }
                 else
                 {
-                    r = m - 1;
+                    u = m - 1;
                 }               
             }
-            return -1;
+            return ++m;
         }
     }
 }

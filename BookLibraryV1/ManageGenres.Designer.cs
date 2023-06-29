@@ -124,6 +124,7 @@
             this.Controls.Add(this.GenreList);
             this.Name = "ManageGenres";
             this.Text = "ManageGenres";
+            this.Load += new System.EventHandler(this.ManageGenres_Load_1);
             this.ResumeLayout(false);
             this.PerformLayout();
 

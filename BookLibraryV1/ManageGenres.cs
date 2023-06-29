@@ -79,5 +79,10 @@ namespace BookLibraryV1
             }
             catch { }
         }
+
+        private void ManageGenres_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

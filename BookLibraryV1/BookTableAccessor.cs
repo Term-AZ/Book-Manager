@@ -263,7 +263,7 @@ namespace BookLibraryV1
                         //create series treenode
                         bookDetails[d["AuthorId"]].Add(new TreeNode()
                         {
-                            Name = d["AuthorId"],
+                            Name = d["Series"],
                             Text = d["Series"],
                             Tag = "Series"
                         });
@@ -705,6 +705,17 @@ namespace BookLibraryV1
                     return reader.GetString(0);
                 }
                 return "";
+            }
+        }
+        public void updateSeriesAuthor(String seriesName, String oldAuthorId, String newAuthorId)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "UPDATE Books SET AuthorId=@nAId WHERE Series =@s and AuthorId=@oAId";
+                command.Parameters.Add(new SQLiteParameter("@nAId", Int32.Parse(newAuthorId)));
+                command.Parameters.Add(new SQLiteParameter("@s", seriesName));
+                command.Parameters.Add(new SQLiteParameter("@oAId", Int32.Parse(oldAuthorId)));
+                command.ExecuteNonQuery();
             }
         }
     }

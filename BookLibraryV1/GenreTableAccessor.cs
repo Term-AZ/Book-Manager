@@ -115,10 +115,11 @@ namespace BookLibraryV1
                         f.ShowDialog();
                         return;
                     }
-                    command.CommandText = "UPDATE Genres SET Genre = @newName WHERE Genre=@oldName";
-                    command.Parameters.Add(new SQLiteParameter("@oldName", oldName));
-                    command.ExecuteNonQuery();
                 }
+                reader.Close();
+                command.CommandText = "UPDATE Genres SET Genre = @newName WHERE Genre=@oldName";
+                command.Parameters.Add(new SQLiteParameter("@oldName", oldName));
+                command.ExecuteNonQuery();
             }
         }
         public void addCustomGenre(String name)
@@ -137,10 +138,11 @@ namespace BookLibraryV1
                         f.ShowDialog();
                         return;
                     }
-                    command.CommandText = "INSERT INTO Genres VALUES(@id, @name)";
-                    command.Parameters.Add(new SQLiteParameter("@id", 0));
-                    command.ExecuteNonQuery();
                 }
+                reader.Close();
+                command.CommandText = "INSERT INTO Genres VALUES(@id, @name)";
+                command.Parameters.Add(new SQLiteParameter("@id", 0));
+                command.ExecuteNonQuery();
             }
         }
         public void deleteGenre(String name)

@@ -73,6 +73,10 @@
             this.ListOfGenresComboBox = new System.Windows.Forms.ComboBox();
             this.DeleteSelectedGenreBtn = new System.Windows.Forms.Button();
             this.ManageGenreBtn = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.authorTableIdTextBox = new System.Windows.Forms.TextBox();
+            this.authorIdTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -420,6 +424,7 @@
             // 
             // UpdateAllBtn
             // 
+            this.UpdateAllBtn.Enabled = false;
             this.UpdateAllBtn.Location = new System.Drawing.Point(549, 478);
             this.UpdateAllBtn.Name = "UpdateAllBtn";
             this.UpdateAllBtn.Size = new System.Drawing.Size(152, 23);
@@ -476,11 +481,49 @@
             this.ManageGenreBtn.UseVisualStyleBackColor = true;
             this.ManageGenreBtn.Click += new System.EventHandler(this.ManageGenreBtn_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(707, 352);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 54;
+            this.label4.Text = "Author Table ID";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(707, 395);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(52, 13);
+            this.label5.TabIndex = 55;
+            this.label5.Text = "Author ID";
+            // 
+            // authorTableIdTextBox
+            // 
+            this.authorTableIdTextBox.Location = new System.Drawing.Point(707, 369);
+            this.authorTableIdTextBox.Name = "authorTableIdTextBox";
+            this.authorTableIdTextBox.ReadOnly = true;
+            this.authorTableIdTextBox.Size = new System.Drawing.Size(119, 20);
+            this.authorTableIdTextBox.TabIndex = 56;
+            // 
+            // authorIdTextBox
+            // 
+            this.authorIdTextBox.Location = new System.Drawing.Point(707, 411);
+            this.authorIdTextBox.Name = "authorIdTextBox";
+            this.authorIdTextBox.ReadOnly = true;
+            this.authorIdTextBox.Size = new System.Drawing.Size(119, 20);
+            this.authorIdTextBox.TabIndex = 57;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1132, 700);
+            this.Controls.Add(this.authorIdTextBox);
+            this.Controls.Add(this.authorTableIdTextBox);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.ManageGenreBtn);
             this.Controls.Add(this.DeleteSelectedGenreBtn);
             this.Controls.Add(this.ListOfGenresComboBox);
@@ -575,6 +618,10 @@
         private System.Windows.Forms.ComboBox ListOfGenresComboBox;
         private System.Windows.Forms.Button DeleteSelectedGenreBtn;
         private System.Windows.Forms.Button ManageGenreBtn;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox authorTableIdTextBox;
+        private System.Windows.Forms.TextBox authorIdTextBox;
     }
 }
 
