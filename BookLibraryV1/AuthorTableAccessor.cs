@@ -46,7 +46,7 @@ namespace BookLibraryV1
                 cmd.ExecuteNonQuery();
                 cmd.CommandText = "INSERT INTO [Authors] VALUES(@AuthorId,@Id, @FirstName, @MiddleName, @LastName, @FullName)";
                 cmd.Parameters.Add(new SQLiteParameter("@AuthorId", -1));
-                cmd.Parameters.Add(new SQLiteParameter("@Id", ""));
+                cmd.Parameters.Add(new SQLiteParameter("@Id", "NoAuthor"));
                 cmd.Parameters.Add(new SQLiteParameter("@FirstName", "No"));
                 cmd.Parameters.Add(new SQLiteParameter("@MiddleName", "Author"));
                 cmd.Parameters.Add(new SQLiteParameter("@LastName", "Found"));

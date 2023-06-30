@@ -14,6 +14,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.IO.Compression;
 
 namespace BookLibraryV1
 {
@@ -48,8 +49,6 @@ namespace BookLibraryV1
             InitializeComponent();
             ViewBooksListView.FullRowSelect = true;
             ViewBooksListView.Visible = false;
-            UpdateAllBtn.Visible = false;
-            UpdateAllBtn.Enabled = false;
             ListOfGenresComboBox.Enabled = false;
             EditGenreBtn.Enabled = false;
             DeleteSelectedGenreBtn.Enabled = false;
@@ -121,23 +120,34 @@ namespace BookLibraryV1
                     DirectoryTextBox.Text = "No files found";
                 }
             }
-            /*            OpenFileDialog dlg = new OpenFileDialog();
-                        dlg.Title = "Select File";
-                        dlg.InitialDirectory = $"{URL}";
-                        dlg.ShowDialog();
-                        DirectoryTextBox.Text = dlg.FileName;
-                        URL = dlg.FileName;*/ 
         }
         private void allBooks(List<String> l)
         {
             foreach(String f in l)
             {
+                DirectoryTextBox.Text = f;
+                FileInfo fi = new FileInfo(f);
                 FileAttributes fa = File.GetAttributes(f);
-                if (fa != FileAttributes.Directory)
+/*                if (fa != FileAttributes.Directory)
                 {
                     booksTitles.Add(f);
                     //allBooks(Directory.GetFiles(f).ToList()); TO DO IT RECURSIVELY, METHOD GetFileSystemEntries gets all files and directories already, not needed to search through each folder
                 }
+                else if((fa & FileAttributes.Compressed) == FileAttributes.Compressed)
+                {
+                    DirectoryTextBox.Text = "ZIP!!!!!";
+                }*/
+
+                if(fi.Extension == ".fb2")
+                {
+                    booksTitles.Add(f);
+                }
+                else if(fi.Extension == ".zip")
+                {
+                    booksTitles.Add(f);
+                    //zipReader(f);
+                }
+
             }
             return; 
         }
@@ -145,6 +155,43 @@ namespace BookLibraryV1
         private void AddBtn_Click(object sender, EventArgs e)
         {
             fileReader.populateTables(booksTitles);
+            /*            foreach (String f in files)
+                        {
+                            DirectoryTextBox.Text = f;
+                            FileInfo fi = new FileInfo(f);
+                            if (fi.Extension==".fb2")
+                            {
+                                booksTitles.Add(f);
+                                List<String> s = new List<String>
+                                {
+                                    f
+                                };
+                                //allBooks(Directory.GetFiles(f).ToList()); TO DO IT RECURSIVELY, METHOD GetFileSystemEntries gets all files and directories already, not needed to search through each folder
+                            }
+                            else if (fi.Extension == ".zip")
+                            {
+                                DirectoryTextBox.Text = "ZIP!";
+                                zipReader(f);
+                            }
+                        }*/
+
+        }
+        private void zipReader(String path)
+        {
+            using (ZipArchive archive = ZipFile.OpenRead(path))
+            {
+                foreach(ZipArchiveEntry i in archive.Entries)
+                {
+                    if (i.FullName.Contains(".zip"))
+                    {
+
+                    }
+                    else
+                    {
+                        booksTitles.Add($"{path}");
+                    }
+                }
+            }
         }
         private void createTables()
         {
@@ -390,14 +437,6 @@ namespace BookLibraryV1
                 //fileReader.editBook(ViewBooks.SelectedNode.Name.Trim(), saveFileDialog.FileName);
             }
         }
-        public void populateFailed(List<String> s)
-        {
-            foreach(String i in s)
-            {
-                FailedURLs.Text += $"{i}\n";
-            }
-        }
-
         private void showInFileExplorer_Click(object sender, EventArgs e)
         {
             if (ViewBooks.SelectedNode != null)
@@ -424,15 +463,11 @@ namespace BookLibraryV1
             {
                 ViewBooks.Visible = true;
                 ViewBooksListView.Visible = false;
-                UpdateAllBtn.Visible = false;
-                UpdateAllBtn.Enabled = false;
             }
             else
             {
                 ViewBooks.Visible = false;
                 ViewBooksListView.Visible = true;
-                UpdateAllBtn.Visible = true;
-                UpdateAllBtn.Enabled = true;
             }
             populateView("default1");
         }
@@ -664,14 +699,13 @@ namespace BookLibraryV1
                         if (result == null)
                         {
                             newAuthorId = createNewAuthor(fullName);
-                            ViewBooks.SelectedNode.Name = newAuthorId.ToString();
+                            ViewBooks.SelectedNode.Tag = newAuthorId.ToString();
                             bookTableAccessor.updateBookAuthorId(newAuthorId, Int32.Parse(bookId));
                             TreeNode copy = (TreeNode)ViewBooks.SelectedNode.Clone();
                             insertAuthorNode(fullName, newAuthorId);
                             removeAuthorNode(oldAuthorId);
-                            //ViewBooks.SelectedNode.Remove();
-                            searchAndUpdate(newAuthorId.ToString(), copy);
                             ViewBooks.SelectedNode.Remove();
+                            searchAndUpdate(newAuthorId.ToString(), copy);
                         }
                         else
                         {
@@ -1022,5 +1056,18 @@ namespace BookLibraryV1
             });
         }
 
+        private void ResetTablesBtn_Click(object sender, EventArgs e)
+        {
+            ResetConfirmer rS = new ResetConfirmer();
+            rS.ShowDialog();
+
+            if (rS.returnValue)
+            {
+                authorTableAccessor.resetAuthorTable();
+                bookTableAccessor.resetBookTable();
+                imageTableAccessor.resetCoverTable();
+                populateView("default1");
+            }
+        }
     }
 }
