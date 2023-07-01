@@ -60,68 +60,71 @@ namespace BookLibraryV1
                         }*/
 
         }
-        public void editBook(String iD, String directory)
+        public void editBook(List<String> ids, String directory)
         {
-            Dictionary<String, String> bookDetails = bookTableAccessor.getBook(iD);
-            List<String> authorDetails = authorTableAccessor.getAuthor(bookTableAccessor.getAuthorId(iD).Trim());
-            String d = bookDetails["Directory"];
-            if (d.Contains(".zip"))
+            foreach(String iD in ids)
             {
-                using (ZipArchive archive = ZipFile.OpenRead(d))
+                Dictionary<String, String> bookDetails = bookTableAccessor.getBook(iD);
+                List<String> authorDetails = authorTableAccessor.getAuthor(bookTableAccessor.getAuthorId(iD).Trim());
+                String d = bookDetails["Directory"];
+                if (d.Contains(".zip"))
                 {
-                    using (var stream = archive.Entries[Int32.Parse(bookDetails["zippedIndex"])].Open())
+                    using (ZipArchive archive = ZipFile.OpenRead(d))
                     {
-                        doc = XDocument.Load(stream);
+                        using (var stream = archive.Entries[Int32.Parse(bookDetails["zippedIndex"])].Open())
+                        {
+                            doc = XDocument.Load(stream);
+                        }
                     }
                 }
-            }
-            else
-            {
-                doc = XDocument.Load($"{bookDetails["Directory"]}");
-            }
-            IEnumerable<XElement> description = doc.Root.Element(ns + "description").Elements();
-            IEnumerable<XElement> titleInfo = description.ElementAt(findTitleInfoIndex(description)).Elements();
-            XElement t = description.ElementAt(0);
-            int index = findAuthorInfoIndex(titleInfo, description);
-            IEnumerable<XElement> authorInfo = titleInfo.ElementAt(index).Elements();
-
-            foreach (XElement author in authorInfo)
-            {
-                switch (author.Name.ToString())
+                else
                 {
-                    case "{http://www.gribuser.ru/xml/fictionbook/2.0}first-name":
-                        author.Value = authorDetails.ElementAt(0);
-                        break;
-                    case "{http://www.gribuser.ru/xml/fictionbook/2.0}last-name":
-                        author.Value = authorDetails.ElementAt(2);
-                        break;
-                    case "{http://www.gribuser.ru/xml/fictionbook/2.0}middle-name":
-                        author.Value = authorDetails.ElementAt(1);
-                        break;
-                    default:
-                        break;
+                    doc = XDocument.Load($"{bookDetails["Directory"]}");
                 }
-            }
-            //garbage code to remove, needs to be changed later
-            for (int i = titleInfo.Count() - 1; i >= 0; i--)
-            {
-                switch (titleInfo.ElementAt(i).Name.ToString())
-                {
-                    case "{http://www.gribuser.ru/xml/fictionbook/2.0}genre":
-                        titleInfo.ElementAt(i).Remove();
-                        break;
-                    case "{http://www.gribuser.ru/xml/fictionbook/2.0}book-title":
-                        titleInfo.ElementAt(i).Value = bookDetails["Title"];
-                        break;
-                    default: break;
-                }
-            }
-            foreach (String newGenre in bookDetails["Genre"].Trim().Split(' '))
-            {
-                t.AddFirst(new XElement("Genre", newGenre));
-            }
+                IEnumerable<XElement> description = doc.Root.Element(ns + "description").Elements();
+                IEnumerable<XElement> titleInfo = description.ElementAt(findTitleInfoIndex(description)).Elements();
+                XElement t = description.ElementAt(0);
+                int index = findAuthorInfoIndex(titleInfo, description);
+                IEnumerable<XElement> authorInfo = titleInfo.ElementAt(index).Elements();
 
-            doc.Save($"{directory}/{bookDetails["Title"]}.fb2");
+                foreach (XElement author in authorInfo)
+                {
+                    switch (author.Name.ToString())
+                    {
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}first-name":
+                            author.Value = authorDetails.ElementAt(0);
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}last-name":
+                            author.Value = authorDetails.ElementAt(2);
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}middle-name":
+                            author.Value = authorDetails.ElementAt(1);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                //garbage code to remove, needs to be changed later
+                for (int i = titleInfo.Count() - 1; i >= 0; i--)
+                {
+                    switch (titleInfo.ElementAt(i).Name.ToString())
+                    {
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}genre":
+                            titleInfo.ElementAt(i).Remove();
+                            break;
+                        case "{http://www.gribuser.ru/xml/fictionbook/2.0}book-title":
+                            titleInfo.ElementAt(i).Value = bookDetails["Title"];
+                            break;
+                        default: break;
+                    }
+                }
+                foreach (String newGenre in bookDetails["Genre"].Trim().Split(' '))
+                {
+                    t.AddFirst(new XElement("Genre", newGenre));
+                }
+
+                doc.Save($"{directory}/{bookDetails["Title"]}.fb2");
+            }  
         }
 
 

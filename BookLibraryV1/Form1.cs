@@ -408,10 +408,7 @@ namespace BookLibraryV1
         }
         private void SaveBook_Click(object sender, EventArgs e)
         {
-/*          SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.InitialDirectory = @"C:\";
-            saveFileDialog.Title = "Save Book";
-            saveFileDialog.ShowDialog();*/
+
             using (var fbd = new FolderBrowserDialog())
             {
                 
@@ -420,7 +417,7 @@ namespace BookLibraryV1
                 {
                     if(ViewBooks.Visible == true)
                     {
-                        fileReader.editBook(ViewBooks.SelectedNode.Name.Trim(), fbd.SelectedPath);
+                        fileReader.editBook(new List<String>{ ViewBooks.SelectedNode.Name.Trim()}, fbd.SelectedPath);
                     }
                     else
                     {
@@ -429,7 +426,13 @@ namespace BookLibraryV1
                             return;
                         }
                         var item = ViewBooksListView.SelectedItems[0];
-                        fileReader.editBook(item.SubItems[0].Text.Trim(), fbd.SelectedPath);
+                        List<String> s = new List<String>();
+                        for(int i =0;i< ViewBooksListView.SelectedItems.Count; i++)
+                        {
+                            s.Add(ViewBooksListView.SelectedItems[i].SubItems[0].Text);
+                        }
+
+                        fileReader.editBook(s, fbd.SelectedPath);
                     }
                     
                     DirectoryTextBox.Text = "File Saved";
