@@ -460,7 +460,7 @@ namespace BookLibraryV1
             {
                 command.CommandText = "UPDATE Books SET Title=@title WHERE Id=@id";
                 command.Parameters.Add(new SQLiteParameter("@title", title));
-                command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(iD)));
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(iD)));
                 command.ExecuteNonQuery();
                 return new TreeNode
                 {
@@ -658,7 +658,7 @@ namespace BookLibraryV1
             {
                 command.CommandText = "UPDATE Books SET SeriesNum=@nN WHERE Id=@id";
                 command.Parameters.Add(new SQLiteParameter("@nN", nNum));
-                command.Parameters.Add(new SQLiteParameter("@Id", Int32.Parse(bookId)));
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(bookId)));
                 command.ExecuteNonQuery();
             }
         }
@@ -720,80 +720,33 @@ namespace BookLibraryV1
                 command.ExecuteNonQuery();
             }
         }
+        public void deleteBooksByAuthorId(String authorId)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "DELETE FROM Books WHERE AuthorId=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", authorId));
+                command.ExecuteNonQuery();
+            }
+        }
+        public void deleteBooksBySeries(String authorId, String series)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "DELETE FROM Books WHERE AuthorId=@id AND Series = @s";
+                command.Parameters.Add(new SQLiteParameter("@id", authorId));
+                command.Parameters.Add(new SQLiteParameter("@s",series));
+                command.ExecuteNonQuery();
+            }
+        }
+        public void deleteBook(String id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "DELETE FROM Books WHERE Id=@id";
+                command.Parameters.Add(new SQLiteParameter("@id", id));
+            }
+        }
     }
 }
 
-
-
-
-/*//check if author key already exists in dictionary, if not add it
-                    if (!bookDetails.ContainsKey(reader.GetString(2)))
-                    {
-                        bookDetails[reader.GetString(2)] = new List<TreeNode>();
-                    }
-                    //check if book is in a series
-                    if (reader.GetString(3) != "")
-                    {
-                        Boolean found = false;
-                        //go over the current treenodes linked to the author
-                        foreach(TreeNode t in bookDetails[reader.GetString(2)])
-                        {
-                            //if series node is found, add the book to it
-                            if(t.Text == reader.GetString(3).Trim())
-                            {
-                                found = true;
-                                t.Nodes.Add(new TreeNode()
-                                {
-                                    Name = reader.GetInt32(0).ToString(),
-                                    Text = reader.GetString(1),
-                                    Tag = reader.GetString(2)
-                                }) ;
-                                break;
-                            }
-                        }
-                        //if a node wasnt found, create a node and add the book to it
-                        if (!found)
-                        {
-                            //create series treenode
-                            bookDetails[reader.GetString(2)].Add(new TreeNode()
-                            {
-                                Name=reader.GetString(2),
-                                Text = reader.GetString(3),
-                                Tag = reader.GetString(2)
-                            });
-                            //add book node to the series node
-                            bookDetails[reader.GetString(2)].Last().Nodes.Add(new TreeNode()
-                            {
-                                Text = reader.GetString(1),
-                                Name = reader.GetInt32(0).ToString(),
-                                Tag = reader.GetString(2)
-                            });
-                        }
-                    }
-                    else{//book isnt in a series, just add it to the author node
-                        bookDetails[reader.GetString(2)].Add(new TreeNode()
-                        {
-                            Text = reader.GetString(1),
-                            Name = reader.GetInt32(0).ToString(),
-                            Tag = reader.GetString(2)
-                        });
-                    }*/
-
-
-
-//OLD CODE TO CREATE TREES
-/*                Dictionary<String, List<TreeNode>> bookDetails = new Dictionary<String, List<TreeNode>>();
-                command.CommandText = "SELECT Id, Title, AuthorId FROM [Books]";
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    if (!bookDetails.ContainsKey(reader.GetString(2)))
-                    {
-                        bookDetails[reader.GetString(2)] = new List<TreeNode>();
-                    }
-                    bookDetails[reader.GetString(2)].Add(new TreeNode() {
-                        Name = reader.GetInt32(0).ToString(),
-                        Text = reader.GetString(1)
-                    });
-                }
-                return bookDetails;  */

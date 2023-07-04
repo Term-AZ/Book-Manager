@@ -59,6 +59,7 @@ namespace BookLibraryV1
         Rectangle saveBookBtn;
         Rectangle changeImageBtn;
         Rectangle searchBtn;
+        Rectangle deleteBtn;
 
         Rectangle ListViewRectangle;
         Rectangle TreeViewRectangle;
@@ -1028,6 +1029,10 @@ namespace BookLibraryV1
             mainNode.Nodes.Find(name.Trim(), true)[0].Nodes.Add(copyNode);
             ViewBooks.SelectedNode = copyNode;
         }
+        private void searchAndUpdateWithoutSelection(String name, TreeNode copyNode)
+        {
+            mainNode.Nodes.Find(name.Trim(), true)[0].Nodes.Add(copyNode);
+        }
         private int createNewAuthor(String fullName)
         {
             return authorTableAccessor.addCustomAuthor(new Dictionary<string, string>
@@ -1088,6 +1093,71 @@ namespace BookLibraryV1
                 populateView("default1");
             }
         }
+        private void DeleteBtn_Click(object sender, EventArgs e)
+        {
+            if(ViewBooks.Visible == true)
+            {
+                int result=2;
+                if(ViewBooks.SelectedNode.Tag == "Author")
+                {
+                    ConfirmDelete cd = new ConfirmDelete(0);
+                    cd.ShowDialog();
+                    if (cd.returnValue == 1)
+                    {
+                        authorTableAccessor.deleteAuthor(ViewBooks.SelectedNode.Name);
+                        bookTableAccessor.deleteBooksByAuthorId(ViewBooks.SelectedNode.Name);
+                        ViewBooks.SelectedNode.Remove();
+                    }
+                    else if (cd.returnValue == 0)
+                    {
+                        authorTableAccessor.deleteAuthor(ViewBooks.SelectedNode.Name);
+                        foreach(TreeNode t in ViewBooks.SelectedNode.Nodes)
+                        {
+                            TreeNode copy = (TreeNode) t.Clone();
+                            searchAndUpdateWithoutSelection("-1", copy);
+                        }
+                        ViewBooks.SelectedNode.Remove();
+                    }
+                    return;
+                    
+                }else if(ViewBooks.SelectedNode.Tag == "Series")
+                {
+                    ConfirmDelete cd = new ConfirmDelete(1);
+                    cd.ShowDialog();
+                    if (cd.returnValue == 1)
+                    {
+                        bookTableAccessor.deleteBooksBySeries(ViewBooks.SelectedNode.Parent.Name, ViewBooks.SelectedNode.Text.Trim());
+                        ViewBooks.SelectedNode.Remove();
+                    }
+                    else if (cd.returnValue == 0)
+                    {
+                        bookTableAccessor.updateSeriesName("",ViewBooks.SelectedNode.Text.Trim(), ViewBooks.SelectedNode.Parent.Name);
+                        foreach(TreeNode t in ViewBooks.SelectedNode.Nodes)
+                        {
+                            TreeNode copy = (TreeNode)t.Clone();
+                            ViewBooks.SelectedNode.Parent.Nodes.Add(copy);
+                        }
+                        ViewBooks.SelectedNode.Remove();
+                    }
+                    return;
+                }
+                else
+                {
+                    ConfirmDelete cd = new ConfirmDelete(2);
+                    cd.ShowDialog();
+                    if (cd.returnValue == 1)
+                    {
+                        bookTableAccessor.deleteBook(ViewBooks.SelectedNode.Name);
+                        ViewBooks.SelectedNode.Remove();
+                    }
+                    return;
+                }
+            }
+            else
+            {
+
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -1114,6 +1184,7 @@ namespace BookLibraryV1
             saveBookBtn = new Rectangle(SaveBook.Location.X, SaveBook.Location.Y, SaveBook.Width, SaveBook.Height);
             changeImageBtn = new Rectangle(UploadImageBtn.Location.X, UploadImageBtn.Location.Y, UploadImageBtn.Width, UploadImageBtn.Height);
             searchBtn = new Rectangle(SearchBtn.Location.X, SearchBtn.Location.Y, SearchBtn.Width, SearchBtn.Height);
+            deleteBtn = new Rectangle(DeleteBtn.Location.X, DeleteBtn.Location.Y, DeleteBtn.Width,DeleteBtn.Height);
 
             ListViewRectangle = new Rectangle(ViewBooksListView.Location.X, ViewBooksListView.Location.Y, ViewBooksListView.Width, ViewBooksListView.Height);
             TreeViewRectangle = new Rectangle(ViewBooks.Location.X, ViewBooks.Location.Y, ViewBooks.Width, ViewBooks.Height);
@@ -1172,6 +1243,7 @@ namespace BookLibraryV1
             ResizeControl(saveBookBtn, SaveBook);
             ResizeControl(changeImageBtn, UploadImageBtn);
             ResizeControl(searchBtn, SearchBtn);
+            ResizeControl(deleteBtn, DeleteBtn);
 
             ResizeControl(ListViewRectangle, ViewBooksListView);
             ResizeControl(TreeViewRectangle, ViewBooks);
@@ -1224,5 +1296,6 @@ namespace BookLibraryV1
             c.Location = new Point(newX, newY);
             c.Size = new Size(newWidth, newHeight);
         }
+
     }
 }

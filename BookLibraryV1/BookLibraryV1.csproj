@@ -97,6 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BookTableAccessor.cs" />
+    <Compile Include="ConfirmDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfirmDelete.Designer.cs">
+      <DependentUpon>ConfirmDelete.cs</DependentUpon>
+    </Compile>
     <Compile Include="ErrorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,6 +146,9 @@
     <Compile Include="SelectAuthor.Designer.cs">
       <DependentUpon>SelectAuthor.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ConfirmDelete.resx">
+      <DependentUpon>ConfirmDelete.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ErrorForm.resx">
       <DependentUpon>ErrorForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
             this.SelectFile = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
             this.BookTitleTextBox = new System.Windows.Forms.TextBox();
@@ -76,6 +76,7 @@
             this.authorTableIdTextBox = new System.Windows.Forms.TextBox();
             this.authorIdTextBox = new System.Windows.Forms.TextBox();
             this.ResetTablesBtn = new System.Windows.Forms.Button();
+            this.DeleteBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -368,10 +369,10 @@
             this.Title,
             this.Author,
             this.Series});
-            listViewGroup3.Header = "Title";
-            listViewGroup3.Name = "Title";
+            listViewGroup2.Header = "Title";
+            listViewGroup2.Name = "Title";
             this.ViewBooksListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3});
+            listViewGroup2});
             this.ViewBooksListView.HideSelection = false;
             this.ViewBooksListView.Location = new System.Drawing.Point(22, 50);
             this.ViewBooksListView.Name = "ViewBooksListView";
@@ -519,11 +520,22 @@
             this.ResetTablesBtn.UseVisualStyleBackColor = true;
             this.ResetTablesBtn.Click += new System.EventHandler(this.ResetTablesBtn_Click);
             // 
+            // DeleteBtn
+            // 
+            this.DeleteBtn.Location = new System.Drawing.Point(549, 507);
+            this.DeleteBtn.Name = "DeleteBtn";
+            this.DeleteBtn.Size = new System.Drawing.Size(146, 23);
+            this.DeleteBtn.TabIndex = 59;
+            this.DeleteBtn.Text = "Delete";
+            this.DeleteBtn.UseVisualStyleBackColor = true;
+            this.DeleteBtn.Click += new System.EventHandler(this.DeleteBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1132, 725);
+            this.Controls.Add(this.DeleteBtn);
             this.Controls.Add(this.ResetTablesBtn);
             this.Controls.Add(this.authorIdTextBox);
             this.Controls.Add(this.authorTableIdTextBox);
@@ -627,6 +639,7 @@
         private System.Windows.Forms.TextBox authorIdTextBox;
         private System.Windows.Forms.Button ResetTablesBtn;
         public System.Windows.Forms.RichTextBox FailedURLs;
+        private System.Windows.Forms.Button DeleteBtn;
     }
 }
 

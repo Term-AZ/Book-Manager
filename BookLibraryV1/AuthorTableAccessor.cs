@@ -150,7 +150,7 @@ namespace BookLibraryV1
                 {
                     authorTreeNodes[reader.GetInt32(0).ToString()] = new TreeNode()
                     {
-                        Name = reader.GetInt32(0).ToString(),
+                        Name = reader.GetInt32(0).ToString().Trim(),
                         Text = reader.GetString(1).Trim(),
                         Tag = "Author"
                     };
