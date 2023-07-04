@@ -77,6 +77,8 @@
             this.ClientSize = new System.Drawing.Size(522, 307);
             this.Controls.Add(this.selectAuthorBtn);
             this.Controls.Add(this.AuthorList);
+            this.MaximumSize = new System.Drawing.Size(538, 346);
+            this.MinimumSize = new System.Drawing.Size(538, 346);
             this.Name = "SelectAuthor";
             this.Text = "SelectAuthor";
             this.Load += new System.EventHandler(this.SelectAuthor_Load);

@@ -72,6 +72,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.YesBtn);
             this.Controls.Add(this.NoBtn);
+            this.MaximumSize = new System.Drawing.Size(417, 246);
+            this.MinimumSize = new System.Drawing.Size(417, 246);
             this.Name = "ResetConfirmer";
             this.Text = "ResetConfirmer";
             this.ResumeLayout(false);

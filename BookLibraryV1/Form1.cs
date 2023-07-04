@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.IO.Compression;
+using System.ComponentModel.Design.Serialization;
 
 namespace BookLibraryV1
 {
@@ -40,13 +41,65 @@ namespace BookLibraryV1
         Dictionary<String, String> bookDetails;
 
         bool genreUpdated = false;
-        
 
+        List<Rectangle> rectangleList = new List<Rectangle>();
+        List<Control> controlList = new List<Control>();
+
+        Rectangle originalFormSize;
+        Rectangle selectFileBtn;
+        Rectangle addFileBtn;
+        Rectangle updateViewBtn;
+        Rectangle changeViewBtn;
+        Rectangle resetTablesBtn;
+        Rectangle addSelectedGenreBtn;
+        Rectangle deleteSelectedGenreBtn;
+        Rectangle manageGeneresBtn;
+        Rectangle updateBookBtn;
+        Rectangle openInFileExplorerBtn;
+        Rectangle saveBookBtn;
+        Rectangle changeImageBtn;
+        Rectangle searchBtn;
+
+        Rectangle ListViewRectangle;
+        Rectangle TreeViewRectangle;
+        Rectangle GenreView;
+
+        Rectangle failedToLoadBox;
+        Rectangle annotationBox;
+
+        Rectangle searchBox;
+        Rectangle directoryTextBox;
+        Rectangle bookTitleTextBox;
+        Rectangle authorFNTextBox;
+        Rectangle authorMNTextBox;
+        Rectangle authorLNTextBox;
+        Rectangle authorTableId;
+        Rectangle authorBookId;
+        Rectangle seriesName;
+        Rectangle seriesNumber;
+
+        Rectangle coverImageBox;
+
+        Rectangle searchDropDown;
+        Rectangle viewDropDown;
+        Rectangle genreDropDown;
+
+        Rectangle rLabel1;
+        Rectangle rLabel2;
+        Rectangle rLabel3;
+        Rectangle rLabel4;
+        Rectangle rLabel5;
+        Rectangle rLabel6;
+        Rectangle rLabel7;
+        Rectangle rLabel8;
+        Rectangle rLabel9;
+        Rectangle rLabel10;
 
         Image image;
         public Form1()
         {
             InitializeComponent();
+            this.Text = "Book Manager";
             ViewBooksListView.FullRowSelect = true;
             ViewBooksListView.Visible = false;
             ListOfGenresComboBox.Enabled = false;
@@ -125,7 +178,6 @@ namespace BookLibraryV1
         {
             foreach(String f in l)
             {
-                DirectoryTextBox.Text = f;
                 FileInfo fi = new FileInfo(f);
                 FileAttributes fa = File.GetAttributes(f);
 /*                if (fa != FileAttributes.Directory)
@@ -145,7 +197,6 @@ namespace BookLibraryV1
                 else if(fi.Extension == ".zip")
                 {
                     booksTitles.Add(f);
-                    //zipReader(f);
                 }
 
             }
@@ -154,44 +205,12 @@ namespace BookLibraryV1
 
         private void AddBtn_Click(object sender, EventArgs e)
         {
-            fileReader.populateTables(booksTitles);
-            /*            foreach (String f in files)
-                        {
-                            DirectoryTextBox.Text = f;
-                            FileInfo fi = new FileInfo(f);
-                            if (fi.Extension==".fb2")
-                            {
-                                booksTitles.Add(f);
-                                List<String> s = new List<String>
-                                {
-                                    f
-                                };
-                                //allBooks(Directory.GetFiles(f).ToList()); TO DO IT RECURSIVELY, METHOD GetFileSystemEntries gets all files and directories already, not needed to search through each folder
-                            }
-                            else if (fi.Extension == ".zip")
-                            {
-                                DirectoryTextBox.Text = "ZIP!";
-                                zipReader(f);
-                            }
-                        }*/
-
-        }
-        private void zipReader(String path)
-        {
-            using (ZipArchive archive = ZipFile.OpenRead(path))
+            if (booksTitles.Count ==0)
             {
-                foreach(ZipArchiveEntry i in archive.Entries)
-                {
-                    if (i.FullName.Contains(".zip"))
-                    {
-
-                    }
-                    else
-                    {
-                        booksTitles.Add($"{path}");
-                    }
-                }
+                return;
             }
+            fileReader.populateTables(booksTitles);
+            populateView("default1");
         }
         private void createTables()
         {
@@ -270,8 +289,7 @@ namespace BookLibraryV1
                         populateListViewByBook(bookTableAccessor.searchBySeriesList(SearchTextBox.Text));
                         break;
                 }
-            }
-           
+            }    
         }
 
         private void populateView(String type)
@@ -356,7 +374,6 @@ namespace BookLibraryV1
         private void populateListViewByBook(List<Dictionary<String,String>> books)
         {
             ViewBooksListView.Items.Clear();
-            DirectoryTextBox.Text = books.Count.ToString();
             foreach (Dictionary<String, String> entry in books)
             {
                 ViewBooksListView.Items.Add(new ListViewItem(new String[] { entry["Id"], entry["Title"], entry["Author"], entry["Series"] }));
@@ -519,7 +536,6 @@ namespace BookLibraryV1
                     if (ViewBooks.SelectedNode.FirstNode == null && ViewBooks.SelectedNode.Parent != null)
                     {
                         bookId = ViewBooks.SelectedNode.Name.Trim();
-                        DirectoryTextBox.Text = bookId;
                         authorDetails = authorTableAccessor.getAuthor(ViewBooks.SelectedNode.Tag.ToString());
                         bookDetails = bookTableAccessor.getBook(bookId);
                         populateInfo(authorDetails, bookDetails);
@@ -1071,6 +1087,142 @@ namespace BookLibraryV1
                 imageTableAccessor.resetCoverTable();
                 populateView("default1");
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+/*            foreach(Control ctrl in this.Controls)
+            {
+                rectangleList.Add(new Rectangle(ctrl.Location.X, ctrl.Location.Y, ctrl.Width, ctrl.Height));
+                controlList.Add(ctrl);
+            }*/
+
+
+
+            originalFormSize = new Rectangle(this.Location.X, this.Location.Y, this.Width, this.Height);
+
+            selectFileBtn = new Rectangle(SelectFile.Location.X, SelectFile.Location.Y, SelectFile.Width, SelectFile.Height);
+            addFileBtn = new Rectangle(AddBtn.Location.X, AddBtn.Location.Y, AddBtn.Width, AddBtn.Height);
+            updateViewBtn = new Rectangle(updateBtn.Location.X, updateBtn.Location.Y, updateBtn.Width, updateBtn.Height);
+            changeViewBtn = new Rectangle(ChangeViewBtn.Location.X, ChangeViewBtn.Location.Y, ChangeViewBtn.Width, ChangeViewBtn.Height);
+            resetTablesBtn = new Rectangle(ResetTablesBtn.Location.X, ResetTablesBtn.Location.Y, ResetTablesBtn.Width, ResetTablesBtn.Height);
+            addSelectedGenreBtn = new Rectangle(EditGenreBtn.Location.X, EditGenreBtn.Location.Y, EditGenreBtn.Width, EditGenreBtn.Height);
+            deleteSelectedGenreBtn = new Rectangle(DeleteSelectedGenreBtn.Location.X, DeleteSelectedGenreBtn.Location.Y, DeleteSelectedGenreBtn.Width, DeleteSelectedGenreBtn.Height);
+            manageGeneresBtn = new Rectangle(ManageGenreBtn.Location.X, ManageGenreBtn.Location.Y, ManageGenreBtn.Width, ManageGenreBtn.Height);
+            updateBookBtn = new Rectangle(UpdateAllFieldsBtn.Location.X, UpdateAllFieldsBtn.Location.Y, UpdateAllFieldsBtn.Width, UpdateAllFieldsBtn.Height);
+            openInFileExplorerBtn = new Rectangle(showInFileExplorer.Location.X, showInFileExplorer.Location.Y, showInFileExplorer.Width, showInFileExplorer.Height);
+            saveBookBtn = new Rectangle(SaveBook.Location.X, SaveBook.Location.Y, SaveBook.Width, SaveBook.Height);
+            changeImageBtn = new Rectangle(UploadImageBtn.Location.X, UploadImageBtn.Location.Y, UploadImageBtn.Width, UploadImageBtn.Height);
+            searchBtn = new Rectangle(SearchBtn.Location.X, SearchBtn.Location.Y, SearchBtn.Width, SearchBtn.Height);
+
+            ListViewRectangle = new Rectangle(ViewBooksListView.Location.X, ViewBooksListView.Location.Y, ViewBooksListView.Width, ViewBooksListView.Height);
+            TreeViewRectangle = new Rectangle(ViewBooks.Location.X, ViewBooks.Location.Y, ViewBooks.Width, ViewBooks.Height);
+
+            searchBox = new Rectangle(SearchTextBox.Location.X, SearchTextBox.Location.Y, SearchTextBox.Width, SearchTextBox.Height);
+            directoryTextBox = new Rectangle(DirectoryTextBox.Location.X, DirectoryTextBox.Location.Y, DirectoryTextBox.Width, DirectoryTextBox.Height);
+            bookTitleTextBox = new Rectangle(BookTitleTextBox.Location.X, BookTitleTextBox.Location.Y, BookTitleTextBox.Width, BookTitleTextBox.Height);
+            authorFNTextBox = new Rectangle(AuthorFNTextBox.Location.X, AuthorFNTextBox.Location.Y, AuthorFNTextBox.Width, AuthorFNTextBox.Height);
+            authorMNTextBox = new Rectangle(AuthorMNTextBox.Location.X, AuthorMNTextBox.Location.Y, AuthorMNTextBox.Width, AuthorMNTextBox.Height);
+            authorLNTextBox = new Rectangle(AuthorLNTextBox.Location.X, AuthorLNTextBox.Location.Y, AuthorLNTextBox.Width, AuthorLNTextBox.Height);
+            authorTableId = new Rectangle(authorTableIdTextBox.Location.X, authorTableIdTextBox.Location.Y, authorTableIdTextBox.Width, authorTableIdTextBox.Height);
+            authorBookId = new Rectangle(authorIdTextBox.Location.X, authorIdTextBox.Location.Y, authorIdTextBox.Width, authorIdTextBox.Height);
+            seriesName = new Rectangle(SeriesNameTextBox.Location.X, SeriesNameTextBox.Location.Y, SeriesNameTextBox.Width, SeriesNameTextBox.Height);
+            seriesNumber = new Rectangle(SeriesNumberTextBox.Location.X, SeriesNumberTextBox.Location.Y, SeriesNumberTextBox.Width, SeriesNumberTextBox.Height);
+
+            GenreView = new Rectangle(GenreListBox.Location.X, GenreListBox.Location.Y, GenreListBox.Width, GenreListBox.Height);
+            failedToLoadBox = new Rectangle(FailedURLs.Location.X, FailedURLs.Location.Y, FailedURLs.Width, FailedURLs.Height);
+            annotationBox = new Rectangle(AnnotationBox.Location.X, AnnotationBox.Location.Y, AnnotationBox.Width, AnnotationBox.Height);
+
+            coverImageBox = new Rectangle(CoverImage.Location.X, CoverImage.Location.Y, CoverImage.Width, CoverImage.Height);
+
+            searchDropDown = new Rectangle(SearchTypeComboBox.Location.X, SearchTypeComboBox.Location.Y, SearchTypeComboBox.Width, SearchTypeComboBox.Height);
+            viewDropDown = new Rectangle(ViewSelection.Location.X, ViewSelection.Location.Y, ViewSelection.Width, ViewSelection.Height);
+            genreDropDown = new Rectangle(ListOfGenresComboBox.Location.X, ListOfGenresComboBox.Location.Y, ListOfGenresComboBox.Width, ListOfGenresComboBox.Height);
+
+            rLabel1 = new Rectangle(TitleLabel.Location.X, TitleLabel.Location.Y, TitleLabel.Width, TitleLabel.Height);
+            rLabel2 = new Rectangle(label1.Location.X, label1.Location.Y, label1.Width, label1.Height);
+            rLabel3 = new Rectangle(label3.Location.X, label3.Location.Y, label3.Width, label3.Height);
+            rLabel4 = new Rectangle(label2.Location.X, label2.Location.Y, label2.Width, label2.Height);
+            rLabel5 = new Rectangle(GenreLabel.Location.X, GenreLabel.Location.Y, GenreLabel.Width, GenreLabel.Height);
+            rLabel6 = new Rectangle(AFNLabel.Location.X, AFNLabel.Location.Y, AFNLabel.Width, AFNLabel.Height);
+            rLabel7 = new Rectangle(AMNLabel.Location.X, AMNLabel.Location.Y, AMNLabel.Width, AMNLabel.Height);
+            rLabel8 = new Rectangle(ALNLabel.Location.X, ALNLabel.Location.Y, ALNLabel.Width, ALNLabel.Height);
+            rLabel9 = new Rectangle(label4.Location.X, label4.Location.Y, label4.Width, label4.Height);
+            rLabel1 = new Rectangle(label5.Location.X, label5.Location.Y, label5.Width, label5.Height);
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            /*            for (int i=0; i < controlList.Count; i++)
+                        {
+                            ResizeControl(rectangleList.ElementAt(i), controlList.ElementAt(i));
+                        }
+            */
+
+            ResizeControl(selectFileBtn, SelectFile);
+            ResizeControl(addFileBtn, AddBtn);
+            ResizeControl(updateViewBtn, updateBtn);
+            ResizeControl(changeViewBtn, ChangeViewBtn);
+            ResizeControl(resetTablesBtn, ResetTablesBtn);
+            ResizeControl(addSelectedGenreBtn, EditGenreBtn);
+            ResizeControl(deleteSelectedGenreBtn, DeleteSelectedGenreBtn);
+            ResizeControl(manageGeneresBtn, ManageGenreBtn);
+            ResizeControl(updateBookBtn, UpdateAllFieldsBtn);
+            ResizeControl(openInFileExplorerBtn, showInFileExplorer);
+            ResizeControl(saveBookBtn, SaveBook);
+            ResizeControl(changeImageBtn, UploadImageBtn);
+            ResizeControl(searchBtn, SearchBtn);
+
+            ResizeControl(ListViewRectangle, ViewBooksListView);
+            ResizeControl(TreeViewRectangle, ViewBooks);
+
+            ResizeControl(searchBox, SearchTextBox);
+            ResizeControl(directoryTextBox, DirectoryTextBox);
+            ResizeControl(bookTitleTextBox, BookTitleTextBox);
+            ResizeControl(authorFNTextBox, AuthorFNTextBox);
+            ResizeControl(authorMNTextBox, AuthorMNTextBox);
+            ResizeControl(authorLNTextBox, AuthorLNTextBox);
+            ResizeControl(authorTableId, authorTableIdTextBox);
+            ResizeControl(authorBookId, authorIdTextBox);
+            ResizeControl(seriesName, SeriesNameTextBox);
+            ResizeControl(seriesNumber, SeriesNumberTextBox);
+
+            ResizeControl(GenreView, GenreListBox);
+            ResizeControl(failedToLoadBox, FailedURLs);
+            ResizeControl(annotationBox, AnnotationBox);
+
+            ResizeControl(coverImageBox, CoverImage);
+
+            ResizeControl(searchDropDown, SearchTypeComboBox);
+            ResizeControl(viewDropDown, ViewSelection);
+            ResizeControl(genreDropDown, ListOfGenresComboBox);
+
+            ResizeControl(rLabel1,TitleLabel);
+            ResizeControl(rLabel2,label1);
+            ResizeControl(rLabel3,label3);
+            ResizeControl(rLabel4,label2);
+            ResizeControl(rLabel5,GenreLabel);
+            ResizeControl(rLabel6,AFNLabel);
+            ResizeControl(rLabel7,AMNLabel);
+            ResizeControl(rLabel8,ALNLabel);
+            ResizeControl(rLabel9,label4);
+            ResizeControl(rLabel1,label5);
+
+
+        }
+        private void ResizeControl(Rectangle r, Control c)
+        {
+            float xRatio = (float)this.Width / (float)originalFormSize.Width;
+            float yRatio = (float)this.Height / (float)originalFormSize.Height;
+
+            int newX = (int)(r.Location.X * xRatio);
+            int newY = (int)(r.Location.Y * yRatio);
+
+            int newWidth = (int)(r.Width * xRatio);
+            int newHeight = (int)(r.Height * yRatio);
+
+            c.Location = new Point(newX, newY);
+            c.Size = new Size(newWidth, newHeight);
         }
     }
 }

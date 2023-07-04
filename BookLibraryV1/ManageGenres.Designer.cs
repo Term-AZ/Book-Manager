@@ -122,6 +122,8 @@
             this.Controls.Add(this.EditGenre);
             this.Controls.Add(this.DeleteGenre);
             this.Controls.Add(this.GenreList);
+            this.MaximumSize = new System.Drawing.Size(545, 457);
+            this.MinimumSize = new System.Drawing.Size(545, 457);
             this.Name = "ManageGenres";
             this.Text = "ManageGenres";
             this.Load += new System.EventHandler(this.ManageGenres_Load_1);

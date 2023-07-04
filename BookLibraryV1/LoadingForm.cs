@@ -10,13 +10,15 @@ using System.Windows.Forms;
 
 namespace BookLibraryV1
 {
-    public partial class Form2 : Form
+    public partial class LoadingForm : Form
     {
         public Form1 form;
 
-        public Form2(int max)
+        public LoadingForm(int max)
         {
             InitializeComponent();
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum=max;
 
         }
 

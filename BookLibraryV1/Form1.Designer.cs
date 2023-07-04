@@ -58,7 +58,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.showInFileExplorer = new System.Windows.Forms.Button();
             this.ViewInBrowserBtn = new System.Windows.Forms.Button();
-            this.ProgressLbl = new System.Windows.Forms.Label();
             this.updateBtn = new System.Windows.Forms.Button();
             this.ViewBooksListView = new System.Windows.Forms.ListView();
             this.Id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -82,16 +81,21 @@
             // 
             // SelectFile
             // 
+            this.SelectFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SelectFile.AutoSize = true;
             this.SelectFile.Location = new System.Drawing.Point(270, 565);
             this.SelectFile.Name = "SelectFile";
-            this.SelectFile.Size = new System.Drawing.Size(75, 23);
+            this.SelectFile.Size = new System.Drawing.Size(82, 23);
             this.SelectFile.TabIndex = 0;
-            this.SelectFile.Text = "Select File(s)";
+            this.SelectFile.Text = " Select Folder";
             this.SelectFile.UseVisualStyleBackColor = true;
             this.SelectFile.Click += new System.EventHandler(this.SelectFile_Click);
             // 
             // AddBtn
             // 
+            this.AddBtn.AutoSize = true;
             this.AddBtn.Location = new System.Drawing.Point(351, 565);
             this.AddBtn.Name = "AddBtn";
             this.AddBtn.Size = new System.Drawing.Size(75, 23);
@@ -207,6 +211,7 @@
             // 
             // SaveBook
             // 
+            this.SaveBook.AutoSize = true;
             this.SaveBook.Location = new System.Drawing.Point(969, 591);
             this.SaveBook.Name = "SaveBook";
             this.SaveBook.Size = new System.Drawing.Size(134, 23);
@@ -225,6 +230,7 @@
             // 
             // EditGenreBtn
             // 
+            this.EditGenreBtn.AutoSize = true;
             this.EditGenreBtn.Location = new System.Drawing.Point(678, 245);
             this.EditGenreBtn.Name = "EditGenreBtn";
             this.EditGenreBtn.Size = new System.Drawing.Size(140, 23);
@@ -324,6 +330,7 @@
             // 
             // showInFileExplorer
             // 
+            this.showInFileExplorer.AutoSize = true;
             this.showInFileExplorer.Location = new System.Drawing.Point(831, 565);
             this.showInFileExplorer.Name = "showInFileExplorer";
             this.showInFileExplorer.Size = new System.Drawing.Size(272, 23);
@@ -334,25 +341,18 @@
             // 
             // ViewInBrowserBtn
             // 
+            this.ViewInBrowserBtn.AutoSize = true;
             this.ViewInBrowserBtn.Location = new System.Drawing.Point(831, 591);
             this.ViewInBrowserBtn.Name = "ViewInBrowserBtn";
             this.ViewInBrowserBtn.Size = new System.Drawing.Size(132, 23);
             this.ViewInBrowserBtn.TabIndex = 37;
             this.ViewInBrowserBtn.Text = "Export to Browser";
             this.ViewInBrowserBtn.UseVisualStyleBackColor = true;
-            // 
-            // ProgressLbl
-            // 
-            this.ProgressLbl.AutoSize = true;
-            this.ProgressLbl.Cursor = System.Windows.Forms.Cursors.Default;
-            this.ProgressLbl.Location = new System.Drawing.Point(128, 588);
-            this.ProgressLbl.Name = "ProgressLbl";
-            this.ProgressLbl.Size = new System.Drawing.Size(35, 13);
-            this.ProgressLbl.TabIndex = 41;
-            this.ProgressLbl.Text = "label4";
+            this.ViewInBrowserBtn.Visible = false;
             // 
             // updateBtn
             // 
+            this.updateBtn.AutoSize = true;
             this.updateBtn.Location = new System.Drawing.Point(432, 565);
             this.updateBtn.Name = "updateBtn";
             this.updateBtn.Size = new System.Drawing.Size(111, 23);
@@ -424,6 +424,7 @@
             // 
             // UpdateAllFieldsBtn
             // 
+            this.UpdateAllFieldsBtn.AutoSize = true;
             this.UpdateAllFieldsBtn.Location = new System.Drawing.Point(549, 478);
             this.UpdateAllFieldsBtn.Name = "UpdateAllFieldsBtn";
             this.UpdateAllFieldsBtn.Size = new System.Drawing.Size(152, 23);
@@ -434,6 +435,7 @@
             // 
             // UploadImageBtn
             // 
+            this.UploadImageBtn.AutoSize = true;
             this.UploadImageBtn.Location = new System.Drawing.Point(842, 366);
             this.UploadImageBtn.Name = "UploadImageBtn";
             this.UploadImageBtn.Size = new System.Drawing.Size(256, 23);
@@ -452,6 +454,7 @@
             // 
             // DeleteSelectedGenreBtn
             // 
+            this.DeleteSelectedGenreBtn.AutoSize = true;
             this.DeleteSelectedGenreBtn.Location = new System.Drawing.Point(679, 274);
             this.DeleteSelectedGenreBtn.Name = "DeleteSelectedGenreBtn";
             this.DeleteSelectedGenreBtn.Size = new System.Drawing.Size(139, 23);
@@ -462,6 +465,7 @@
             // 
             // ManageGenreBtn
             // 
+            this.ManageGenreBtn.AutoSize = true;
             this.ManageGenreBtn.Location = new System.Drawing.Point(679, 304);
             this.ManageGenreBtn.Name = "ManageGenreBtn";
             this.ManageGenreBtn.Size = new System.Drawing.Size(139, 23);
@@ -506,6 +510,7 @@
             // 
             // ResetTablesBtn
             // 
+            this.ResetTablesBtn.AutoSize = true;
             this.ResetTablesBtn.Location = new System.Drawing.Point(270, 620);
             this.ResetTablesBtn.Name = "ResetTablesBtn";
             this.ResetTablesBtn.Size = new System.Drawing.Size(273, 23);
@@ -533,7 +538,6 @@
             this.Controls.Add(this.ViewSelection);
             this.Controls.Add(this.ViewBooksListView);
             this.Controls.Add(this.updateBtn);
-            this.Controls.Add(this.ProgressLbl);
             this.Controls.Add(this.ViewInBrowserBtn);
             this.Controls.Add(this.showInFileExplorer);
             this.Controls.Add(this.label3);
@@ -563,8 +567,11 @@
             this.Controls.Add(this.BookTitleTextBox);
             this.Controls.Add(this.AddBtn);
             this.Controls.Add(this.SelectFile);
+            this.MinimumSize = new System.Drawing.Size(1148, 764);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.CoverImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -601,7 +608,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button showInFileExplorer;
         private System.Windows.Forms.Button ViewInBrowserBtn;
-        public System.Windows.Forms.Label ProgressLbl;
         private System.Windows.Forms.Button updateBtn;
         private System.Windows.Forms.ListView ViewBooksListView;
         private System.Windows.Forms.ColumnHeader Title;

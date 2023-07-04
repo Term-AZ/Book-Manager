@@ -16,13 +16,14 @@ using System.Data.SQLite;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices.ComTypes;
+using System.Diagnostics;
 
 namespace BookLibraryV1
 {
     internal class FileReader
     {
         static Form1 form;
-        static Form2 form2;
+        static LoadingForm form2;
         static AuthorTableAccessor authorTableAccessor;
         static BookTableAccessor bookTableAccessor;
         GenreTableAccessor genreTableAccessor;
@@ -36,6 +37,9 @@ namespace BookLibraryV1
         public static List<String> failedFiles = new List<string>();
         public static int p = 0;
         static Thread pr;
+        static int fileSize=0;
+
+        int size = 0;
 
         public FileReader(Form1 f, AuthorTableAccessor dBAuthor, BookTableAccessor dBBooks, GenreTableAccessor dbGenre, ImageTableAccessor dbImage)
         {
@@ -48,17 +52,15 @@ namespace BookLibraryV1
         public void populateTables(List<String> files)
         {
             failedFiles = new List<string>();
+            fileSize = files.Count;
             Thread counterThreads = new Thread(new ParameterizedThreadStart(read.readBook));
-            //Thread progressBar = new Thread(new ParameterizedThreadStart(progress));
-            //form2.Show();
+
+            form2 = new LoadingForm(fileSize);
+            form2.Name = "Loading";
+            form2.Show();
 
             counterThreads.Start(files);
-            //progressBar.Start(files.Count);
-            /*            while (counterThreads.IsAlive)
-                        {
-                            form2.progressLbl.Text = $"{p}";
-                        }*/
-
+            form.Enabled = false;
         }
         public void editBook(List<String> ids, String directory)
         {
@@ -124,7 +126,7 @@ namespace BookLibraryV1
                 }
 
                 doc.Save($"{directory}/{bookDetails["Title"]}.fb2");
-            }  
+            }
         }
 
 
@@ -172,6 +174,7 @@ namespace BookLibraryV1
 
         class read
         {
+            static int counter = 0;
             static LocalDataStoreSlot localSlot;
             static read()
             {
@@ -180,7 +183,7 @@ namespace BookLibraryV1
             public static void readBook(object l)
             {
                 var books = ((IEnumerable)l).Cast<object>().ToList();
-
+                
                 foreach (string f in books)
                 {
                     addingbook(f);
@@ -191,6 +194,15 @@ namespace BookLibraryV1
                         form.FailedURLs.Text += $"{s}\n"
                 ));
                 }
+                form2.progressLbl.Invoke(new Action(() =>
+                    form2.progressLbl.Text = $"Successfully read {counter} files, application can now be closed"
+                    ));
+                form2.label1.Invoke(new Action(() =>
+                    form2.label1.Hide()
+                ));
+                form.Invoke(new Action(() =>
+                    form.Enabled = true
+                ));
             }
             private static void addingbook(string f)
             {
@@ -209,13 +221,16 @@ namespace BookLibraryV1
                         using (ZipArchive archive = ZipFile.OpenRead(f))
                         {
                             int x = 0;
+                            fileSize += archive.Entries.Count;
                             foreach (ZipArchiveEntry i in archive.Entries)
                             {
                                 currentZippedPath = $"{f}\\{i.FullName}";
                                 FileInfo nFi = new FileInfo(i.FullName);
-                                if(nFi.Extension == ".zip")
+
+
+                                if (nFi.Extension == ".zip")
                                 {
-                                    addingbook($"{f}\\{i.FullName}");
+                                    addingbook($"{f}\\{i.Name}");
                                 }
                                 else
                                 {
@@ -361,29 +376,19 @@ namespace BookLibraryV1
                     imageTableAccessor.addToCoverTable(imageUrl);
                     bookList["ImageId"] = imageTableAccessor.getRecentAdded().ToString();
                     bookTableAccessor.addBook(bookList);
+                    counter++;
+                    form2.progressLbl.Invoke(new Action(() =>
+                        form2.progressLbl.Text = $"Progress: {counter}/{fileSize}"
+                        ));
+                    form2.progressBar1.Invoke(new Action(() =>
+                        form2.progressBar1.Value = counter
+                        ));
                 }
                 catch
                 {
                     failedFiles.Add(f);
                 }
             }
-        }
-
-        private static void progress(object s)
-        {
-            int size = Convert.ToInt32(s);
-            for (int i = 0; i <= size; i++)
-            {
-                form.ProgressLbl.Invoke(new Action(() =>
-                    form.ProgressLbl.Text = $"Reading Books {i} / {s}"
-                ));
-                Thread.Sleep(100);
-            }
-        }
-
-        private static void progress()
-        {
-
         }
     }
 }
