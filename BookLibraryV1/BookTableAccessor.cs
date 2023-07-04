@@ -744,7 +744,7 @@ namespace BookLibraryV1
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 command.CommandText = "DELETE FROM Books WHERE Id=@id";
-                command.Parameters.Add(new SQLiteParameter("@id", id));
+                command.Parameters.Add(new SQLiteParameter("@id", Int32.Parse(id)));
             }
         }
     }

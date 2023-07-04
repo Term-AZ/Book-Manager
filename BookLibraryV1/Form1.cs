@@ -1110,16 +1110,16 @@ namespace BookLibraryV1
                     }
                     else if (cd.returnValue == 0)
                     {
-                        authorTableAccessor.deleteAuthor(ViewBooks.SelectedNode.Name);
                         foreach(TreeNode t in ViewBooks.SelectedNode.Nodes)
                         {
+                            bookTableAccessor.updateBookAuthorId(-1,Int32.Parse(t.Name));
                             TreeNode copy = (TreeNode) t.Clone();
                             searchAndUpdateWithoutSelection("-1", copy);
                         }
+                        authorTableAccessor.deleteAuthor(ViewBooks.SelectedNode.Name);
                         ViewBooks.SelectedNode.Remove();
                     }
                     return;
-                    
                 }else if(ViewBooks.SelectedNode.Tag == "Series")
                 {
                     ConfirmDelete cd = new ConfirmDelete(1);
@@ -1155,10 +1155,19 @@ namespace BookLibraryV1
             }
             else
             {
-
+                ConfirmDelete cd= new ConfirmDelete(3);
+                cd.ShowDialog();
+                if (cd.returnValue == 1)
+                {
+                    for(int i = 0; i < ViewBooksListView.SelectedItems.Count; i++)
+                    {
+                        bookTableAccessor.deleteBook(ViewBooksListView.SelectedItems[i].SubItems[0].Text);
+                        ViewBooksListView.Items[i].Remove();
+                    }
+                }
+                return;
             }
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
 /*            foreach(Control ctrl in this.Controls)

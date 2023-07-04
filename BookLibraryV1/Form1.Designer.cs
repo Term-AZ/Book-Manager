@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Title", System.Windows.Forms.HorizontalAlignment.Left);
             this.SelectFile = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
             this.BookTitleTextBox = new System.Windows.Forms.TextBox();
@@ -369,10 +369,10 @@
             this.Title,
             this.Author,
             this.Series});
-            listViewGroup2.Header = "Title";
-            listViewGroup2.Name = "Title";
+            listViewGroup3.Header = "Title";
+            listViewGroup3.Name = "Title";
             this.ViewBooksListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup2});
+            listViewGroup3});
             this.ViewBooksListView.HideSelection = false;
             this.ViewBooksListView.Location = new System.Drawing.Point(22, 50);
             this.ViewBooksListView.Name = "ViewBooksListView";
@@ -524,7 +524,7 @@
             // 
             this.DeleteBtn.Location = new System.Drawing.Point(549, 507);
             this.DeleteBtn.Name = "DeleteBtn";
-            this.DeleteBtn.Size = new System.Drawing.Size(146, 23);
+            this.DeleteBtn.Size = new System.Drawing.Size(152, 23);
             this.DeleteBtn.TabIndex = 59;
             this.DeleteBtn.Text = "Delete";
             this.DeleteBtn.UseVisualStyleBackColor = true;

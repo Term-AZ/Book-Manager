@@ -26,7 +26,6 @@ namespace BookLibraryV1
         static LoadingForm form2;
         static AuthorTableAccessor authorTableAccessor;
         static BookTableAccessor bookTableAccessor;
-        GenreTableAccessor genreTableAccessor;
         static ImageTableAccessor imageTableAccessor;
         static Dictionary<String, String> authorList;
         static Dictionary<String, String> bookList;
@@ -46,7 +45,6 @@ namespace BookLibraryV1
             form = f;
             authorTableAccessor = dBAuthor;
             bookTableAccessor = dBBooks;
-            genreTableAccessor = dbGenre;
             imageTableAccessor = dbImage;
         }
         public void populateTables(List<String> files)
@@ -245,7 +243,7 @@ namespace BookLibraryV1
                         }
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     failedFiles.Add(currentZippedPath);
                 }
