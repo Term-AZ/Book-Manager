@@ -867,6 +867,7 @@ namespace BookLibraryV1
                         for (int i = 0; i < ViewBooksListView.SelectedItems.Count; i++)
                         {
                             bookTableAccessor.updateBook(ViewBooksListView.SelectedItems[i].SubItems[0].Text, BookTitleTextBox.Text);
+                            bookTableAccessor.updateBookAuthorId(Int32.Parse(authorIdTextBox.Text.Trim()), Int32.Parse(ViewBooksListView.SelectedItems[0].SubItems[0].Text));
                             ViewBooksListView.SelectedItems[i].SubItems[1].Text = BookTitleTextBox.Text;
                         }
                     }

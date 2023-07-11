@@ -379,7 +379,13 @@ namespace BookLibraryV1
                         form2.progressLbl.Text = $"Progress: {counter}/{fileSize}"
                         ));
                     form2.progressBar1.Invoke(new Action(() =>
-                        form2.progressBar1.Value = counter
+                    {
+                        try
+                        {
+                            form2.progressBar1.Value = counter;
+                        }
+                        catch { }
+                    }
                         ));
                 }
                 catch
