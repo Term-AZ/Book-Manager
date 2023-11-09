@@ -1,7 +1,7 @@
 # Book Manager
 Augusts Zilakovs
 
-#Setup
+# Setup
 Extract and run executable
 
 #Diagrams
