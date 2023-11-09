@@ -19,7 +19,7 @@ namespace BookLibraryV1
         {
             form = forms;
             connection = conn;
-            xmlURL = $"{url}\\BookLibraryV1\\Genres.xml";
+            xmlURL = $"Genres.xml";
         }
 
         public void createGenreTable()
